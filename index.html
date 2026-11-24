@@ -1,0 +1,4395 @@
+<!doctype html>
+<html lang="pt-BR">
+<head>
+  <meta charset="utf-8">
+  <meta name="viewport" content="width=device-width,initial-scale=1">
+  <meta http-equiv="Content-Security-Policy" content="default-src 'none'; script-src 'unsafe-inline'; style-src 'unsafe-inline'; connect-src https: http:; img-src data: blob:; object-src 'none'; base-uri 'none'; form-action 'none'">
+  <title>RCS Local | Enterprise Quality & QDA / Lists</title>
+  <style>
+    :root {
+      color-scheme: light dark;
+      --espresso: #52312E;
+      --kraft: #E1C4A8;
+      --slate: #293345;
+      --bg: #EFE2D3;
+      --panel: #FFFDF9;
+      --surface: #E8D2B9;
+      --ink: #293345;
+      --muted: #5F544E;
+      --border: #D2B497;
+      --blue: #293345;
+      --green: #18794E;
+      --red: #B82835;
+      --orange: #A85311;
+    }
+    * { box-sizing: border-box; }
+    body {
+      margin: 0;
+      background: linear-gradient(180deg, #E1C4A8 0%, var(--bg) 280px, var(--bg) 100%);
+      background-attachment: fixed;
+      color: var(--ink);
+      font: 14.5px system-ui, -apple-system, Segoe UI, Roboto, sans-serif;
+    }
+    main {
+      max-width: 1480px;
+      margin: auto;
+      padding: 18px 24px 28px;
+    }
+
+    /* Enterprise Topbar Header */
+    header.topbar {
+      background: linear-gradient(135deg, #293345 0%, #52312E 100%);
+      color: #FFFDF9;
+      padding: 18px 24px;
+      border-radius: 16px;
+      margin-bottom: 14px;
+      border-bottom: 4px solid #E1C4A8;
+      box-shadow: 0 8px 22px rgba(41, 51, 69, 0.2);
+      display: flex;
+      align-items: center;
+      justify-content: space-between;
+      gap: 20px;
+      flex-wrap: wrap;
+    }
+    .brand-block {
+      display: flex;
+      align-items: center;
+      gap: 16px;
+    }
+    .brand-mark {
+      width: 46px;
+      height: 46px;
+      border-radius: 12px;
+      background: #E1C4A8;
+      color: #293345;
+      display: grid;
+      place-items: center;
+      font-weight: 800;
+      font-size: 16px;
+      letter-spacing: -0.03em;
+      border: 2px solid rgba(255, 253, 249, 0.35);
+      flex-shrink: 0;
+    }
+    .brand-text h1 {
+      margin: 0;
+      font-size: 23px;
+      letter-spacing: -0.02em;
+      color: #FFFDF9;
+      display: flex;
+      align-items: center;
+      gap: 10px;
+      flex-wrap: wrap;
+    }
+    .brand-text p {
+      margin: 3px 0 0;
+      font-size: 13px;
+      color: #E1C4A8;
+      opacity: 0.95;
+    }
+    .badge {
+      display: inline-block;
+      background: rgba(225, 196, 168, 0.16);
+      border: 1px solid #E1C4A8;
+      color: #E1C4A8;
+      border-radius: 30px;
+      padding: 4px 11px;
+      font-size: 11px;
+      font-weight: 600;
+      letter-spacing: 0.04em;
+      text-transform: uppercase;
+    }
+
+    /* Status & Settings Toolbar */
+    .status-toolbar {
+      display: grid;
+      grid-template-columns: 1fr auto;
+      gap: 12px;
+      align-items: start;
+      margin-bottom: 16px;
+    }
+    #message, #syncWarning {
+      white-space: pre-line;
+      border-left: 5px solid #293345;
+      padding: 11px 15px;
+      background: var(--panel);
+      border-top: 1px solid var(--border);
+      border-right: 1px solid var(--border);
+      border-bottom: 1px solid var(--border);
+      border-radius: 11px;
+      margin: 0;
+      font-size: 13.5px;
+      box-shadow: 0 2px 8px rgba(41, 51, 69, 0.06);
+    }
+    #syncWarning {
+      border-left-color: var(--orange);
+      color: var(--orange);
+      font-weight: 500;
+      margin-bottom: 12px;
+    }
+    details.settings-drawer {
+      background: var(--panel);
+      border: 1px solid var(--border);
+      border-radius: 11px;
+      padding: 10px 15px;
+      box-shadow: 0 2px 8px rgba(41, 51, 69, 0.06);
+      position: relative;
+    }
+    details.settings-drawer[open] {
+      grid-column: 1 / -1;
+      padding: 16px 18px;
+    }
+    details.settings-drawer > summary {
+      list-style: none;
+      display: inline-flex;
+      align-items: center;
+      gap: 8px;
+      font-size: 13.5px;
+      font-weight: 650;
+      color: #52312E;
+      cursor: pointer;
+      user-select: none;
+    }
+    details.settings-drawer > summary::-webkit-details-marker { display: none; }
+    details.settings-drawer > summary::before {
+      content: "⚙";
+      font-size: 15px;
+    }
+
+    /* Enterprise Bento Grid System */
+    .ops-grid {
+      display: grid;
+      grid-template-columns: 350px 1fr;
+      gap: 16px;
+      align-items: stretch;
+      margin-bottom: 16px;
+    }
+    .bento-overview {
+      display: grid;
+      grid-template-columns: 1.15fr 1fr;
+      gap: 16px;
+      align-items: stretch;
+      margin-bottom: 16px;
+    }
+    .charts-bento {
+      display: grid;
+      grid-template-columns: 1.2fr 1fr;
+      gap: 16px;
+      align-items: stretch;
+      margin-bottom: 16px;
+    }
+    .stats-raw-bento {
+      display: grid;
+      grid-template-columns: 1.1fr 1fr;
+      gap: 16px;
+      align-items: stretch;
+    }
+
+    section {
+      background: var(--panel);
+      border: 1px solid var(--border);
+      border-radius: 15px;
+      padding: 18px 20px;
+      margin: 0;
+      box-shadow: 0 4px 14px rgba(41, 51, 69, 0.05);
+      display: flex;
+      flex-direction: column;
+      min-width: 0;
+    }
+    .section-head {
+      display: flex;
+      align-items: center;
+      justify-content: space-between;
+      gap: 12px;
+      flex-wrap: wrap;
+      margin-bottom: 12px;
+    }
+    h2 {
+      font-size: 16.5px;
+      margin: 0 0 12px;
+      color: #293345;
+      border-left: 4px solid #52312E;
+      padding-left: 10px;
+      line-height: 1.25;
+      letter-spacing: -0.01em;
+    }
+    .section-head h2 { margin-bottom: 0; }
+    p { line-height: 1.5; margin: 6px 0; }
+
+    /* Compact Upload Zone */
+    .drop {
+      border: 2px dashed #B59578;
+      border-radius: 12px;
+      text-align: center;
+      padding: 20px 16px;
+      background: color-mix(in srgb, #E1C4A8 42%, var(--panel));
+      transition: .15s;
+      flex: 1;
+      display: flex;
+      flex-direction: column;
+      justify-content: center;
+      align-items: center;
+      gap: 8px;
+    }
+    .drop.over {
+      border-color: #293345;
+      background: color-mix(in srgb, #293345 12%, #E1C4A8);
+    }
+    .drop-icon {
+      width: 40px;
+      height: 40px;
+      border-radius: 10px;
+      background: rgba(41, 51, 69, 0.1);
+      color: #293345;
+      display: grid;
+      place-items: center;
+      font-size: 20px;
+      font-weight: 700;
+    }
+
+    /* Empty Queue Placeholder (Auto-hides when #batchSection is visible) */
+    #batchSection:not([hidden]) + .empty-queue-card {
+      display: none !important;
+    }
+    .empty-queue-card {
+      background: color-mix(in srgb, #E1C4A8 22%, var(--panel));
+      border: 1px dashed var(--border);
+      justify-content: center;
+    }
+    .workflow-steps {
+      display: grid;
+      grid-template-columns: repeat(3, 1fr);
+      gap: 12px;
+      margin-top: 10px;
+    }
+    .step-box {
+      padding: 14px;
+      border-radius: 11px;
+      background: var(--panel);
+      border: 1px solid var(--border);
+      border-top: 3px solid #293345;
+    }
+    .step-box strong {
+      display: block;
+      font-size: 13.5px;
+      color: #293345;
+      margin-bottom: 4px;
+    }
+    .step-box span {
+      font-size: 12.5px;
+      color: var(--muted);
+      line-height: 1.4;
+      display: block;
+    }
+
+    /* Buttons */
+    button {
+      font: inherit;
+      font-size: 13.5px;
+      font-weight: 600;
+      background: #293345;
+      color: #FFFDF9;
+      border: 1px solid #1E2634;
+      border-radius: 9px;
+      padding: 9px 14px;
+      cursor: pointer;
+      display: inline-flex;
+      align-items: center;
+      justify-content: center;
+      gap: 6px;
+      box-shadow: 0 2px 5px rgba(41, 51, 69, 0.2);
+      transition: background .15s, border-color .15s, transform .08s, box-shadow .15s;
+    }
+    button:hover:not(:disabled) {
+      background: #1F2736;
+      box-shadow: 0 4px 10px rgba(41, 51, 69, 0.28);
+    }
+    button:active:not(:disabled) {
+      transform: translateY(1px);
+    }
+    button.secondary {
+      background: #E1C4A8;
+      color: #293345;
+      border: 1px solid #C4A384;
+      box-shadow: none;
+    }
+    button.secondary:hover:not(:disabled) {
+      background: #D5B495;
+      box-shadow: 0 2px 6px rgba(82, 49, 46, 0.12);
+    }
+    button.accent {
+      background: #52312E;
+      color: #FFFDF9;
+      border: 1px solid #3F2422;
+      box-shadow: 0 2px 5px rgba(82, 49, 46, 0.24);
+    }
+    button.accent:hover:not(:disabled) {
+      background: #3F2522;
+      box-shadow: 0 4px 10px rgba(82, 49, 46, 0.34);
+    }
+    button:disabled {
+      opacity: .45;
+      cursor: not-allowed;
+      box-shadow: none;
+    }
+    button:focus-visible, input:focus-visible, select:focus-visible, summary:focus-visible {
+      outline: 3px solid #52312E;
+      outline-offset: 2px;
+    }
+    .actions {
+      display: flex;
+      gap: 8px;
+      flex-wrap: wrap;
+      margin-top: 12px;
+    }
+
+    /* Compact Enterprise KPI & Meta Grids */
+    .grid {
+      display: grid;
+      grid-template-columns: repeat(auto-fit, minmax(140px, 1fr));
+      gap: 10px;
+    }
+    #cards.grid {
+      grid-template-columns: repeat(3, minmax(0, 1fr));
+    }
+    #stats.grid {
+      grid-template-columns: repeat(2, minmax(0, 1fr));
+    }
+    .meta-grid {
+      display: grid;
+      grid-template-columns: repeat(4, minmax(0, 1fr));
+      gap: 9px;
+      margin: 4px 0 10px;
+    }
+    .meta-item {
+      padding: 10px 12px;
+      border: 1px solid var(--border);
+      border-left: 3.5px solid #293345;
+      border-radius: 9px;
+      background: color-mix(in srgb, #E1C4A8 42%, var(--panel));
+    }
+    .meta-item span {
+      display: block;
+      font-size: 11px;
+      text-transform: uppercase;
+      letter-spacing: 0.03em;
+      color: var(--muted);
+      font-weight: 600;
+    }
+    .meta-item strong {
+      display: block;
+      font-size: 13.5px;
+      margin-top: 3px;
+      color: #293345;
+      overflow-wrap: anywhere;
+    }
+    .card {
+      min-width: 0;
+      overflow-wrap: anywhere;
+      padding: 11px 13px;
+      border: 1px solid var(--border);
+      border-top: 3px solid #52312E;
+      border-radius: 10px;
+      background: color-mix(in srgb, #E1C4A8 20%, var(--panel));
+    }
+    .card span {
+      display: block;
+      font-size: 11.5px;
+      color: var(--muted);
+      font-weight: 550;
+    }
+    .card strong {
+      display: block;
+      font-size: 20px;
+      margin-top: 4px;
+      letter-spacing: -0.02em;
+    }
+
+    /* Enterprise Workspace Navigation Tabs */
+    .workspace-nav {
+      display: flex;
+      align-items: center;
+      justify-content: space-between;
+      gap: 10px;
+      flex-wrap: wrap;
+      background: var(--panel);
+      border: 1px solid var(--border);
+      padding: 8px 12px;
+      border-radius: 13px;
+      margin-bottom: 16px;
+      box-shadow: 0 3px 10px rgba(41, 51, 69, 0.05);
+    }
+    .tab-list {
+      display: flex;
+      gap: 6px;
+      flex-wrap: wrap;
+    }
+    button.tab-btn {
+      background: transparent;
+      color: var(--ink);
+      border: 1px solid transparent;
+      box-shadow: none;
+      padding: 8px 14px;
+      border-radius: 9px;
+      font-size: 13px;
+      font-weight: 650;
+    }
+    button.tab-btn:hover:not(:disabled) {
+      background: color-mix(in srgb, #E1C4A8 45%, var(--panel));
+      box-shadow: none;
+    }
+    button.tab-btn.active {
+      background: #293345;
+      color: #FFFDF9;
+      border-color: #1E2634;
+      box-shadow: 0 2px 6px rgba(41, 51, 69, 0.22);
+    }
+    .tab-pill {
+      display: inline-block;
+      padding: 1px 7px;
+      border-radius: 20px;
+      font-size: 11px;
+      background: rgba(225, 196, 168, 0.45);
+      color: inherit;
+    }
+    button.tab-btn.active .tab-pill {
+      background: #E1C4A8;
+      color: #293345;
+    }
+
+    /* Tab Panel Visibility Logic */
+    #results[data-active-tab="overview"] .tab-panel:not([data-tab-panel="overview"]),
+    #results[data-active-tab="table"] .tab-panel:not([data-tab-panel="table"]),
+    #results[data-active-tab="stats"] .tab-panel:not([data-tab-panel="stats"]) {
+      display: none !important;
+    }
+    #results[data-active-tab="all"] .tab-panel {
+      display: block !important;
+      margin-bottom: 16px;
+    }
+
+    .muted { color: var(--muted); }
+    .ok { color: var(--green); }
+    .bad { color: var(--red); }
+    .warn { color: var(--orange); }
+    .info { color: var(--blue); }
+
+    label {
+      display: block;
+      margin: 10px 0 4px;
+      font-weight: 550;
+      font-size: 13px;
+    }
+    input:not([type=checkbox]), select {
+      width: 100%;
+      padding: 8px 10px;
+      border: 1px solid var(--border);
+      border-radius: 8px;
+      background: var(--panel);
+      color: var(--ink);
+      font-size: 13.5px;
+    }
+    input[type=checkbox] {
+      width: 17px;
+      height: 17px;
+      vertical-align: middle;
+      accent-color: #293345;
+    }
+    input[type=range] {
+      accent-color: #293345;
+    }
+    summary {
+      cursor: pointer;
+      font-weight: 650;
+      color: #52312E;
+    }
+    canvas {
+      width: 100%;
+      height: 265px;
+      display: block;
+      touch-action: pan-y;
+    }
+    #box { height: 155px; }
+    #comparison { height: 175px; }
+    .chart-controls {
+      display: flex;
+      align-items: center;
+      gap: 10px;
+      flex-wrap: wrap;
+      background: color-mix(in srgb, #E1C4A8 28%, var(--panel));
+      padding: 8px 12px;
+      border-radius: 9px;
+      border: 1px solid var(--border);
+      margin-bottom: 8px;
+    }
+    .chart-controls label { margin: 0; }
+    .chart-controls input { max-width: 180px; }
+
+    .table-toolbar {
+      display: flex;
+      align-items: center;
+      justify-content: space-between;
+      gap: 12px;
+      flex-wrap: wrap;
+      margin-bottom: 10px;
+      background: color-mix(in srgb, #E1C4A8 26%, var(--panel));
+      padding: 8px 12px;
+      border-radius: 10px;
+      border: 1px solid var(--border);
+    }
+    .table-toolbar .filter-group {
+      display: flex;
+      align-items: center;
+      gap: 8px;
+      flex-wrap: wrap;
+    }
+    .table-toolbar label { margin: 0; }
+    .table-toolbar select { width: auto; min-width: 240px; }
+
+    .scroll {
+      overflow: auto;
+      max-height: 440px;
+      border: 1px solid var(--border);
+      border-radius: 10px;
+    }
+    #batchSection .scroll {
+      max-height: 270px;
+    }
+    table {
+      width: 100%;
+      border-collapse: collapse;
+      font-size: 12.8px;
+    }
+    th, td {
+      text-align: left;
+      padding: 9px 11px;
+      border-bottom: 1px solid var(--border);
+      vertical-align: middle;
+    }
+    th {
+      position: sticky;
+      top: 0;
+      background: color-mix(in srgb, #E1C4A8 62%, var(--panel));
+      color: #293345;
+      font-weight: 650;
+      border-bottom: 2px solid #C4A384;
+      z-index: 1;
+    }
+    td {
+      overflow-wrap: anywhere;
+      max-width: 240px;
+    }
+    tbody tr:hover {
+      background: color-mix(in srgb, #E1C4A8 28%, var(--panel));
+    }
+    tr.selected {
+      background: color-mix(in srgb, #293345 10%, #E1C4A8);
+    }
+    tr.selected:hover {
+      background: color-mix(in srgb, #293345 16%, #E1C4A8);
+    }
+    pre {
+      white-space: pre-wrap;
+      overflow-wrap: anywhere;
+      max-height: 250px;
+      overflow: auto;
+      background: color-mix(in srgb, #E1C4A8 40%, var(--panel));
+      border: 1px solid var(--border);
+      padding: 12px;
+      border-radius: 8px;
+      font-size: 12px;
+      margin: 8px 0 0;
+    }
+    footer {
+      padding: 16px 8px 4px;
+      text-align: center;
+      color: var(--muted);
+      font-size: 12.5px;
+    }
+    [hidden] { display: none !important; }
+
+    /* Dark Mode Calibration */
+    @media (prefers-color-scheme: dark) {
+      :root {
+        --bg: #1B222E;
+        --panel: #242D3D;
+        --surface: #2F3A4E;
+        --ink: #F4EAE0;
+        --muted: #D2BEA9;
+        --border: #404D63;
+        --blue: #E1C4A8;
+        --green: #62D8A2;
+        --red: #FF8A95;
+        --orange: #F2B880;
+      }
+      body {
+        background: linear-gradient(180deg, #293345 0%, var(--bg) 280px, var(--bg) 100%);
+      }
+      h2 {
+        color: #E1C4A8;
+        border-left-color: #E1C4A8;
+      }
+      details.settings-drawer > summary {
+        color: #E1C4A8;
+      }
+      .drop-icon {
+        background: rgba(225, 196, 168, 0.14);
+        color: #E1C4A8;
+      }
+      .step-box {
+        border-top-color: #E1C4A8;
+      }
+      .step-box strong {
+        color: #E1C4A8;
+      }
+      button {
+        background: #293345;
+        color: #FFFDF9;
+        border-color: #4A5A78;
+      }
+      button:hover:not(:disabled) {
+        background: #344157;
+      }
+      button.secondary {
+        background: #323E52;
+        color: #E1C4A8;
+        border-color: #4F607D;
+      }
+      button.secondary:hover:not(:disabled) {
+        background: #3D4B63;
+      }
+      button.accent {
+        background: #52312E;
+        color: #E1C4A8;
+        border-color: #7A4B47;
+      }
+      button.accent:hover:not(:disabled) {
+        background: #663D3A;
+      }
+      button.tab-btn.active {
+        background: #52312E;
+        color: #E1C4A8;
+        border-color: #84534F;
+      }
+      summary {
+        color: #E1C4A8;
+      }
+      .meta-item {
+        border-left-color: #E1C4A8;
+        background: color-mix(in srgb, #E1C4A8 8%, var(--panel));
+      }
+      .meta-item strong {
+        color: #F4EAE0;
+      }
+      .card {
+        border-top-color: #E1C4A8;
+        background: color-mix(in srgb, #E1C4A8 6%, var(--panel));
+      }
+      th {
+        background: #2F3A4E;
+        color: #E1C4A8;
+        border-bottom-color: #4A5A78;
+      }
+      tbody tr:hover {
+        background: color-mix(in srgb, #E1C4A8 10%, var(--panel));
+      }
+      tr.selected {
+        background: color-mix(in srgb, #52312E 55%, var(--panel));
+      }
+      tr.selected:hover {
+        background: color-mix(in srgb, #52312E 70%, var(--panel));
+      }
+    }
+
+    /* Factory Gate Modal (CDAS Style) & Topbar Factory Switcher */
+    .factory-gate-overlay {
+      position: fixed;
+      inset: 0;
+      z-index: 9999;
+      background: rgba(27, 34, 46, 0.78);
+      backdrop-filter: blur(6px);
+      display: grid;
+      place-items: center;
+      padding: 20px;
+    }
+    .factory-gate-card {
+      width: 100%;
+      max-width: 470px;
+      background: var(--panel);
+      border: 2px solid #E1C4A8;
+      border-top: 6px solid #52312E;
+      border-radius: 18px;
+      padding: 28px 28px 24px;
+      box-shadow: 0 22px 50px rgba(0, 0, 0, 0.42);
+    }
+    .factory-gate-header {
+      display: flex;
+      align-items: center;
+      gap: 14px;
+      margin-bottom: 14px;
+    }
+    .factory-gate-card h2 {
+      border-left: none;
+      padding-left: 0;
+      margin: 0;
+      font-size: 21px;
+    }
+    .factory-gate-card select {
+      font-size: 15px;
+      font-weight: 600;
+      padding: 11px 12px;
+      margin-top: 6px;
+      border: 1.5px solid #B59578;
+      background: color-mix(in srgb, #E1C4A8 22%, var(--panel));
+    }
+    .topbar-factory {
+      display: flex;
+      align-items: center;
+      gap: 10px;
+      background: rgba(255, 253, 249, 0.1);
+      border: 1px solid rgba(225, 196, 168, 0.45);
+      padding: 7px 13px;
+      border-radius: 12px;
+    }
+    .topbar-factory span {
+      font-size: 12px;
+      color: #E1C4A8;
+      font-weight: 600;
+      text-transform: uppercase;
+      letter-spacing: 0.03em;
+    }
+    .topbar-factory strong {
+      font-size: 14px;
+      color: #FFFDF9;
+      background: #52312E;
+      border: 1px solid #E1C4A8;
+      padding: 3px 10px;
+      border-radius: 7px;
+    }
+    .topbar-factory button {
+      padding: 5px 10px;
+      font-size: 12px;
+      background: #E1C4A8;
+      color: #293345;
+      border-color: #C4A384;
+      box-shadow: none;
+    }
+    .topbar-factory button:hover:not(:disabled) {
+      background: #D5B495;
+    }
+
+    /* Responsive Breakpoints */
+    @media (max-width: 1120px) {
+      .ops-grid,
+      .bento-overview,
+      .charts-bento,
+      .stats-raw-bento {
+        grid-template-columns: 1fr;
+      }
+      .meta-grid {
+        grid-template-columns: repeat(2, minmax(0, 1fr));
+      }
+    }
+    @media (max-width: 640px) {
+      main { padding: 10px; }
+      header.topbar, section { padding: 14px; }
+      .status-toolbar { grid-template-columns: 1fr; }
+      .workflow-steps { grid-template-columns: 1fr; }
+      #cards.grid { grid-template-columns: repeat(2, minmax(0, 1fr)); }
+      .meta-grid { grid-template-columns: 1fr; }
+    }
+  </style>
+</head>
+<body>
+  <!-- CDAS-Style Mandatory Factory Gate Screen before accessing the app -->
+  <div id="factoryGate" class="factory-gate-overlay" role="dialog" aria-modal="true" aria-labelledby="factoryGateTitle">
+    <div class="factory-gate-card">
+      <div class="factory-gate-header">
+        <div class="brand-mark" aria-hidden="true">RCS</div>
+        <div>
+          <span class="badge" style="background:#52312E;color:#E1C4A8;border-color:#52312E;margin-bottom:4px">Identificação Obrigatória · Padrão CDAS</span>
+          <h2 id="factoryGateTitle">Selecione a Fábrica (Planta)</h2>
+        </div>
+      </div>
+      <p class="muted" style="font-size:13.5px;margin-top:0">
+        Antes de acessar o <strong>RCS Local</strong>, selecione a sua fábrica. Essa identificação será enviada automaticamente junto com os resultados para o <strong>Microsoft Lists</strong> e Power BI.
+      </p>
+      <label for="factoryGateSelect">Fábrica de origem (36 plantas Tetra Pak):</label>
+      <select id="factoryGateSelect">
+        <option value="">-- Selecione sua fábrica --</option>
+        <option value="Arganda">Arganda</option>
+        <option value="Beijing">Beijing</option>
+        <option value="Binh Duong">Binh Duong</option>
+        <option value="Budaors">Budaors</option>
+        <option value="Chakan">Chakan</option>
+        <option value="Châteaubriant">Châteaubriant</option>
+        <option value="Denton">Denton</option>
+        <option value="Fjallbacka">Fjallbacka</option>
+        <option value="Gornji">Gornji</option>
+        <option value="Gotemba">Gotemba</option>
+        <option value="Hjörring">Hjörring</option>
+        <option value="Hohhot">Hohhot</option>
+        <option value="Hohhot AddMat">Hohhot AddMat</option>
+        <option value="Imatra">Imatra</option>
+        <option value="Izmir">Izmir</option>
+        <option value="Jeddah">Jeddah</option>
+        <option value="Kunshan">Kunshan</option>
+        <option value="Lahore">Lahore</option>
+        <option value="LaRioja">LaRioja</option>
+        <option value="Limburg">Limburg</option>
+        <option value="Mexicali">Mexicali</option>
+        <option value="MonteMor">MonteMor</option>
+        <option value="Nairobi">Nairobi</option>
+        <option value="PilotPlant">PilotPlant</option>
+        <option value="PilotPlant 118">PilotPlant 118</option>
+        <option value="Pinetown">Pinetown</option>
+        <option value="PontaGrossa">PontaGrossa</option>
+        <option value="Queretaro">Queretaro</option>
+        <option value="Rayong">Rayong</option>
+        <option value="Rubiera">Rubiera</option>
+        <option value="Sevilla">Sevilla</option>
+        <option value="Sezzadio">Sezzadio</option>
+        <option value="Skoghall">Skoghall</option>
+        <option value="Sunne">Sunne</option>
+        <option value="Taipei">Taipei</option>
+        <option value="Vancouver">Vancouver</option>
+      </select>
+      <div class="actions" style="margin-top:18px;justify-content:flex-end">
+        <button id="factoryGateConfirm" type="button" style="width:100%;padding:12px 18px;font-size:14.5px" disabled>
+          Confirmar Fábrica e Acessar RCS Local →
+        </button>
+      </div>
+    </div>
+  </div>
+
+  <main>
+    <header class="topbar">
+      <div class="brand-block">
+        <div class="brand-mark" aria-hidden="true">RCS</div>
+        <div class="brand-text">
+          <h1>RCS Local <span class="badge">100% Local · Padrão QDA &amp; Lists</span></h1>
+          <p>Painel corporativo de inspeção AL300 (.AL3 / .CSV), exportação QDA com Bending Forces e telemetria de vincadores.</p>
+        </div>
+      </div>
+      <div class="topbar-factory" aria-label="Fábrica selecionada">
+        <span>Fábrica Ativa:</span>
+        <strong id="activeFactoryBadge">Não selecionada</strong>
+        <button id="changeFactoryBtn" type="button">Trocar Fábrica</button>
+      </div>
+    </header>
+
+    <div id="syncWarning" role="alert" hidden></div>
+
+    <div class="status-toolbar">
+      <div id="message" role="status" aria-live="polite">Pronto para carregar. Nenhum dado é armazenado permanentemente pela aplicação.</div>
+
+      <details class="settings-drawer">
+        <summary>Parâmetros &amp; Integração Lists</summary>
+        <p class="muted" style="margin-top:10px">A regra de seleção é fixa: sempre a última ocorrência. Alterações são aplicadas imediatamente aos arquivos carregados.</p>
+        <div class="grid config">
+          <div>
+            <label for="sectionName">Nome da seção</label>
+            <input id="sectionName" value="prop-values" maxlength="64">
+          </div>
+          <div>
+            <label for="required">Resultados necessários</label>
+            <input id="required" type="number" value="16" min="1" max="10000">
+          </div>
+          <div>
+            <label for="multiplier">Multiplicador IQR</label>
+            <input id="multiplier" type="number" value="1.5" min="0.1" max="10" step="0.1">
+          </div>
+          <div>
+            <label for="decimals">Casas decimais</label>
+            <select id="decimals">
+              <option value="">Preservar precisão original</option>
+              <option value="0">0</option>
+              <option value="1">1</option>
+              <option value="2">2</option>
+              <option value="3">3</option>
+              <option value="4">4</option>
+              <option value="5">5</option>
+              <option value="6">6</option>
+            </select>
+          </div>
+          <div>
+            <label for="delimiter">Delimitador CSV</label>
+            <select id="delimiter">
+              <option value=";">Ponto e vírgula</option>
+              <option value=",">Vírgula</option>
+              <option value="tab">Tabulação</option>
+            </select>
+          </div>
+          <div>
+            <label for="decimal">Separador decimal</label>
+            <select id="decimal">
+              <option value=",">Vírgula</option>
+              <option value=".">Ponto</option>
+            </select>
+          </div>
+          <div>
+            <label for="maximum">Limite máximo (opcional)</label>
+            <input id="maximum" type="number" min="0" step="any" placeholder="Sem limite">
+          </div>
+          <div>
+            <label><input id="zero" type="checkbox" checked> Permitir zero</label>
+            <label><input id="incomplete" type="checkbox"> Permitir CSV incompleto</label>
+          </div>
+        </div>
+        <div style="margin-top:14px;border-top:1px solid var(--border);padding-top:12px">
+          <label for="listsWebhookUrl">URL do Fluxo Power Automate (Envio automático ao Microsoft Lists no 1º download de cada corrida)</label>
+          <input id="listsWebhookUrl" type="url" value="https://defaultd2d2794a61cc482396908e288fd554.cc.environment.api.powerplatform.com:443/powerautomate/automations/direct/cu/08/workflows/356fadf689774512b28604c5178ebbee/triggers/manual/paths/invoke?api-version=1&amp;sp=%2Ftriggers%2Fmanual%2Frun&amp;sv=1.0&amp;sig=OwWaot7YGbcayxh1jTEYIuIAzMEo9zeHO2wu8dgHhNQ" placeholder="Cole aqui a URL HTTP POST gerada no Power Automate...">
+          <div class="actions">
+            <button id="saveWebhook" type="button" class="secondary">Salvar URL do Lists</button>
+            <button id="testWebhook" type="button" class="secondary">Testar conexão com o Lists</button>
+            <button id="downloadDb" type="button" class="secondary">Baixar backup local da base (.CSV)</button>
+          </div>
+          <p id="dbStatus" class="muted" style="margin:8px 0 0"></p>
+        </div>
+      </details>
+    </div>
+
+    <!-- Top Operations Grid: Upload on Left + Processed Queue on Right -->
+    <div class="ops-grid">
+      <section>
+        <h2>1. Entrada de Arquivos (.AL3 / .CSV)</h2>
+        <div id="drop" class="drop">
+          <div class="drop-icon" aria-hidden="true">↑</div>
+          <p style="margin:0;font-weight:600">Arraste um ou vários arquivos da máquina RCS</p>
+          <button id="choose" type="button">Selecionar arquivo(s)</button>
+          <input id="file" type="file" accept=".txt,.al3,.rcs,.csv,.dat,.json,.xml" multiple hidden>
+          <p id="fileInfo" class="muted" style="font-size:12px;margin:0">Nenhum arquivo selecionado (Suporta lote · Limite: 50 MB).</p>
+        </div>
+        <div class="actions">
+          <button id="process" type="button" disabled>Reprocessar</button>
+          <button id="clear" type="button" class="secondary">Limpar fila</button>
+        </div>
+      </section>
+
+      <section id="batchSection" hidden>
+        <div class="section-head">
+          <h2>2. Fila de Arquivos Processados (Download QDA + Envio ao Lists)</h2>
+        </div>
+        <p id="batchSummary" class="muted" style="margin-top:0"></p>
+        <div class="scroll">
+          <table>
+            <thead>
+              <tr>
+                <th>#</th>
+                <th>Arquivo</th>
+                <th>P-order / Faixa</th>
+                <th>Máquina / Vincador</th>
+                <th>Medições / Falhas</th>
+                <th>Status Lists / Download</th>
+                <th>Ações Individuais</th>
+              </tr>
+            </thead>
+            <tbody id="batchRows"></tbody>
+          </table>
+        </div>
+      </section>
+
+      <section class="empty-queue-card" aria-label="Guia rápido de operação">
+        <h2>2. Central de Exportação QDA &amp; Microsoft Lists</h2>
+        <p class="muted" style="margin-top:0">Carregue um ou mais arquivos ao lado para liberar a fila interativa de processamento em lote.</p>
+        <div class="workflow-steps">
+          <div class="step-box">
+            <strong>1. Leitura em Lote (.AL3 / .CSV)</strong>
+            <span>Identifica automaticamente P-order, Máquina, Vincador, Faixa e classifica Material Acabado (A → PM) ou Papel (P → Board).</span>
+          </div>
+          <div class="step-box">
+            <strong>2. Download QDA + Lists</strong>
+            <span>Gera o CSV com as 16 amostras e alimenta o Microsoft Lists no 1º clique, com trava automática contra envio duplicado.</span>
+          </div>
+          <div class="step-box">
+            <strong>3. Diagnóstico de Vincador</strong>
+            <span>Separa falhas de sensor (-1) e outliers IQR em abas organizadas e gera o PDF executivo para manutenção.</span>
+          </div>
+        </div>
+      </section>
+    </div>
+
+    <!-- Active File Dashboard: Bento Summary + Tabbed Inspection Views -->
+    <div id="results" data-active-tab="overview" hidden>
+      <div class="bento-overview">
+        <section>
+          <h2>Identificação da Ordem, Equipamento e Seção</h2>
+          <div id="metaCards" class="meta-grid" hidden></div>
+          <p id="sectionInfo" style="font-size:13px"></p>
+          <p id="trace" class="muted" style="font-size:12px;margin-bottom:0"></p>
+        </section>
+
+        <section>
+          <h2>Resumo Executivo do Processamento</h2>
+          <div id="cards" class="grid"></div>
+          <p id="warnings" class="warn" style="margin-bottom:0;font-weight:600"></p>
+        </section>
+      </div>
+
+      <!-- Enterprise Tab Navigation Bar -->
+      <nav class="workspace-nav" aria-label="Visualizações da corrida selecionada">
+        <div class="tab-list" role="tablist">
+          <button type="button" class="tab-btn active" role="tab" aria-selected="true" data-tab-target="overview">
+            Diagnóstico &amp; Gráficos <span id="tabBadgeAnomalies" class="tab-pill">0 falhas</span>
+          </button>
+          <button type="button" class="tab-btn" role="tab" aria-selected="false" data-tab-target="table">
+            Tabela de Medições &amp; Forças <span id="tabBadgeRecords" class="tab-pill">16</span>
+          </button>
+          <button type="button" class="tab-btn" role="tab" aria-selected="false" data-tab-target="stats">
+            Estatística IQR &amp; Dados Brutos
+          </button>
+          <button type="button" class="tab-btn" role="tab" aria-selected="false" data-tab-target="all">
+            Painel Completo (Ver Tudo)
+          </button>
+        </div>
+      </nav>
+
+      <!-- TAB 1: Overview (Side-by-side Charts + Anomalies Table) -->
+      <div class="tab-panel" data-tab-panel="overview">
+        <div class="charts-bento">
+          <section>
+            <div class="section-head">
+              <h2>Medições na Ordem Original</h2>
+              <span class="muted" style="font-size:12px">● Selecionado · ● Válido · ▲ Outlier · × Inválido</span>
+            </div>
+            <div class="chart-controls">
+              <label for="zoom">Janela</label>
+              <select id="zoom" style="width:auto">
+                <option value="all">Todas (até 2.000)</option>
+                <option value="16">16 posições</option>
+                <option value="50">50 posições</option>
+                <option value="200">200 posições</option>
+              </select>
+              <label for="pan">Início</label>
+              <input id="pan" type="range" min="1" max="1" value="1">
+            </div>
+            <canvas id="series" aria-label="Medições na ordem original" role="img"></canvas>
+            <p id="hover" class="muted" aria-live="polite" style="font-size:12.5px;margin-bottom:0">Toque ou passe o cursor sobre um ponto para consultar seus detalhes.</p>
+          </section>
+
+          <section>
+            <h2>Boxplot IQR e Comparação Antes × Depois</h2>
+            <canvas id="box" aria-label="Boxplot com quartis, limites IQR e outliers" role="img"></canvas>
+            <p id="boxInfo" class="muted" style="font-size:12px"></p>
+            <canvas id="comparison" aria-label="Comparação da média, mediana e desvio padrão antes e depois" role="img"></canvas>
+            <p id="compareInfo" class="muted" style="font-size:12px;margin-bottom:0"></p>
+          </section>
+        </div>
+
+        <section>
+          <h2>Resumo do que Ficou Ruim (Vincador e Máquina)</h2>
+          <p id="anomalySummary" class="muted" style="margin-top:0"></p>
+          <div class="scroll">
+            <table>
+              <thead>
+                <tr>
+                  <th>Amostra</th>
+                  <th>O que ficou ruim</th>
+                  <th>Valor RCS</th>
+                  <th>Forças (Vinco / Sem Vinco)</th>
+                  <th>Causa provável / O que verificar</th>
+                </tr>
+              </thead>
+              <tbody id="anomalyRows"></tbody>
+            </table>
+          </div>
+        </section>
+      </div>
+
+      <!-- TAB 2: Full Measurements Table -->
+      <div class="tab-panel" data-tab-panel="table">
+        <section>
+          <div class="table-toolbar">
+            <div class="filter-group">
+              <h2 style="margin:0">Tabela de Medições e Bending Forces</h2>
+              <label for="filter" style="margin-left:8px">Filtrar:</label>
+              <select id="filter">
+                <option value="all">Todos os registros</option>
+                <option value="selected">Selecionados para o CSV (16 primeiros)</option>
+                <option value="valid">Todos os válidos</option>
+                <option value="outliers">Somente Outliers (IQR)</option>
+                <option value="invalid">Somente Inválidos / Falhas (-1)</option>
+              </select>
+            </div>
+            <div class="actions" style="margin-top:0;align-items:center">
+              <button id="prev" type="button" class="secondary">Anterior</button>
+              <span id="pageInfo" style="font-size:13px;font-weight:600"></span>
+              <button id="next" type="button" class="secondary">Próxima</button>
+            </div>
+          </div>
+          <div class="scroll">
+            <table>
+              <thead>
+                <tr>
+                  <th>Sample (CSV)</th>
+                  <th>Seq. Máquina</th>
+                  <th>Posição original</th>
+                  <th>RCS (Original)</th>
+                  <th>RCS (Interpretado)</th>
+                  <th>Bending Force Crease</th>
+                  <th>Bending Force Uncrease</th>
+                  <th>Status</th>
+                  <th>Motivo</th>
+                  <th>CSV</th>
+                </tr>
+              </thead>
+              <tbody id="rows"></tbody>
+            </table>
+          </div>
+        </section>
+      </div>
+
+      <!-- TAB 3: Statistical Analysis & Raw Section Preview -->
+      <div class="tab-panel" data-tab-panel="stats">
+        <div class="stats-raw-bento">
+          <section>
+            <h2>Análise Estatística da Última Seção (IQR)</h2>
+            <div id="stats" class="grid"></div>
+            <p class="muted" style="font-size:12.5px;margin-bottom:0">Quartis: interpolação linear. Desvio padrão amostral (n − 1). Antes = valores não negativos e válidos pelo processo, antes do IQR. Depois = todos os válidos após o IQR, não apenas os selecionados.</p>
+          </section>
+
+          <section>
+            <h2>Prévia e Conteúdo Bruto da Última Seção</h2>
+            <p id="preview" style="font-size:13px;margin-top:0"></p>
+            <details open>
+              <summary>Inspecionar texto bruto extraído</summary>
+              <pre id="raw"></pre>
+            </details>
+          </section>
+        </div>
+      </div>
+    </div>
+
+    <footer>RCS Local v1.4.0 · Arquitetura Corporativa Local · Integração automática com QDA, Microsoft Lists e Power BI.</footer>
+  </main>
+<script>
+/* RCS Local 1.2.0. No network, no dependencies. Parser adapters are isolated here. */
+(function (root) {
+  'use strict';
+
+  const VERSION = '1.2.0';
+
+  class ParseError extends Error {
+    constructor(message, meta = {}) {
+      super(message);
+      this.meta = meta;
+    }
+  }
+
+  const defaults = {
+    section: 'prop-values',
+    required: 16,
+    multiplier: 1.5,
+    allowZero: true,
+    max: null,
+    decimals: null,
+    delimiter: ';',
+    decimal: ',',
+    allowIncomplete: false
+  };
+
+  function parse_numeric_value(raw) {
+    if (raw === null || raw === undefined || String(raw).trim() === '') {
+      return { value: null, status: 'Valor ausente' };
+    }
+    const s = String(raw).trim();
+    if (!/^[+-]?(?:\d+(?:[.,]\d*)?|[.,]\d+)(?:[eE][+-]?\d+)?$/.test(s)) {
+      return { value: null, status: 'Valor não numérico' };
+    }
+    const value = Number(s.replace(',', '.'));
+    return Number.isFinite(value)
+      ? { value, status: value < 0 ? 'Valor negativo' : 'Válido' }
+      : { value: null, status: 'Valor não numérico' };
+  }
+
+  function line_position(text, offset) {
+    let line = 1;
+    let lastNewline = -1;
+    const limit = Math.min(offset, text.length);
+    for (let i = 0; i < limit; i++) {
+      if (text.charCodeAt(i) === 10) {
+        line++;
+        lastNewline = i;
+      }
+    }
+    return {
+      offset,
+      line,
+      column: offset - (lastNewline + 1) + 1
+    };
+  }
+
+  function escapeRE(s) {
+    return s.replace(/[.*+?^${}()|[\]\\]/g, '\\$&');
+  }
+
+  function find_all_prop_values_sections(text, name = 'prop-values') {
+    const re = new RegExp('(?<![A-Za-z0-9_-])' + escapeRE(name) + '(?![A-Za-z0-9_-])', 'gi');
+    return [...text.matchAll(re)].map((m, i) => ({
+      index: i + 1,
+      start: m.index,
+      after: m.index + m[0].length,
+      ...line_position(text, m.index)
+    }));
+  }
+
+  function select_last_prop_values_section(sections) {
+    return sections.length ? sections[sections.length - 1] : null;
+  }
+
+  function record(raw, i, seq = i + 1, offset = null, error = null) {
+    const p = parse_numeric_value(raw);
+    return {
+      position: i + 1,
+      sequence: seq,
+      raw: raw === null ? '' : String(raw ?? ''),
+      value: p.value,
+      status: error ? 'Erro de leitura' : p.status,
+      reason: error || (p.status === 'Válido' ? '' : p.status),
+      selected: false,
+      offset,
+      crease: '',
+      uncrease: '',
+      creaseValue: null,
+      uncreaseValue: null
+    };
+  }
+
+  function format_date_br(dateStr) {
+    const s = String(dateStr ?? '').trim();
+    const m = /^(\d{4})-(\d{2})-(\d{2})$/.exec(s);
+    return m ? `${m[3]}/${m[2]}/${m[1]}` : s;
+  }
+
+  function split_csv_line(line, delim) {
+    const cells = [];
+    let cur = '';
+    let inQuotes = false;
+    for (let i = 0; i < line.length; i++) {
+      const c = line[i];
+      if (inQuotes) {
+        if (c === '"') {
+          if (line[i + 1] === '"') {
+            cur += '"';
+            i++;
+          } else {
+            inQuotes = false;
+          }
+        } else {
+          cur += c;
+        }
+      } else if (c === '"') {
+        inQuotes = true;
+      } else if (c === delim) {
+        cells.push(cur.trim());
+        cur = '';
+      } else {
+        cur += c;
+      }
+    }
+    cells.push(cur.trim());
+    return cells;
+  }
+
+  function unquote_csv_cell(s) {
+    const t = s.trim();
+    if (t.length >= 2 && t.startsWith('"') && t.endsWith('"')) {
+      return t.slice(1, -1).replace(/""/g, '"').trim();
+    }
+    return t;
+  }
+
+  function clean_csv_padded_line(rawLine, allowCommaPadding = false) {
+    let s = rawLine.trim();
+    if (allowCommaPadding) {
+      s = s.replace(/[;\t,]+$/, '').trim();
+    } else {
+      s = s.replace(/[;\t]+$/, '').trim();
+    }
+    return unquote_csv_cell(s);
+  }
+
+  function resolve_rcs_column_name(pOrder, summaryTitle = '', fallbackType = '') {
+    const p = String(pOrder ?? '').replace(/\s+/g, ' ').trim();
+    const typeMatch = /^\S+\s+([AP])\b/i.exec(p) || /\b([AP])\s+(?:CD|MD|TC)\b/i.exec(p);
+    const letter = typeMatch ? typeMatch[1].toUpperCase() : 'P';
+    const materialSuffix = letter === 'A' ? 'PM' : 'Board';
+
+    const dirSource = summaryTitle || p || fallbackType;
+    const direction = /\bMD\b/i.test(dirSource) ? 'MD' : 'CD';
+    return `RCS ${direction} ${materialSuffix}`;
+  }
+
+  function extract_al300_context(text, sections) {
+    const rawLines = text.split('\n').map(l => l.replace(/\r$/, ''));
+    const firstSummaryIdx = rawLines.findIndex(l => /^\s*"?PROP-SUMMARY\b/i.test(l));
+    let qdaMeta = null;
+
+    if (firstSummaryIdx >= 25 && /^\s*"?AL300\s+SAMPLE\b/i.test(rawLines[0])) {
+      const clean = idx => clean_csv_padded_line(rawLines[idx] ?? '');
+      const normalizedPOrder = clean(17).replace(/\s+/g, ' ').trim();
+      const typeVal = clean(2);
+      const procVal = clean(24) || typeVal;
+      qdaMeta = {
+        sourceType: 'al300',
+        pOrder: normalizedPOrder,
+        type: typeVal,
+        procedure: procVal,
+        operator: clean(22),
+        date: format_date_br(clean(7)),
+        dateISO: clean(7),
+        time: clean(8),
+        creasingTool: clean(13),
+        position: clean(14),
+        web: clean(15),
+        machine: clean(16),
+        board: clean(18),
+        roll: clean(20),
+        rcsColumn: resolve_rcs_column_name(normalizedPOrder, '', typeVal)
+      };
+    }
+
+    // Identify section summaries (e.g. Creased, Uncreased, RCS CD / RCS MD)
+    const summaryTitles = [];
+    for (let i = 0; i < rawLines.length; i++) {
+      if (/^\s*"?PROP-SUMMARY\b/i.test(rawLines[i])) {
+        const title = clean_csv_padded_line(rawLines[i + 3] ?? '');
+        summaryTitles.push({ lineIndex: i, title });
+      }
+    }
+
+    if (qdaMeta && summaryTitles.length) {
+      const lastTitle = summaryTitles[summaryTitles.length - 1].title;
+      qdaMeta.rcsColumn = resolve_rcs_column_name(qdaMeta.pOrder, lastTitle, qdaMeta.type);
+    }
+
+    let creaseMap = new Map();
+    let uncreaseMap = new Map();
+
+    if (sections.length >= 3) {
+      try {
+        const auxCandidates = sections.slice(0, -1);
+        let secCrease = sections[sections.length - 3];
+        let secUncrease = sections[sections.length - 2];
+
+        if (summaryTitles.length >= sections.length) {
+          for (let idx = 0; idx < auxCandidates.length; idx++) {
+            const t = summaryTitles[idx]?.title || '';
+            if (/\buncreased\b/i.test(t)) secUncrease = auxCandidates[idx];
+            else if (/\bcreased\b/i.test(t)) secCrease = auxCandidates[idx];
+          }
+        }
+
+        const blockCrease = delimit_last_text_section(text, secCrease);
+        const blockUncrease = delimit_last_text_section(text, secUncrease);
+        const recsCrease = extract_measurements_from_section(blockCrease);
+        const recsUncrease = extract_measurements_from_section(blockUncrease);
+
+        for (const r of recsCrease) creaseMap.set(r.sequence, r);
+        for (const r of recsUncrease) uncreaseMap.set(r.sequence, r);
+      } catch (_) {
+        // Ignore auxiliary section errors; only last section is authoritative
+      }
+    }
+
+    return { qdaMeta, creaseMap, uncreaseMap };
+  }
+
+  function find_csv_table_sections(text, name = 'prop-values') {
+    const lines = text.split('\n');
+    const sections = [];
+    const customName = name.trim().toLowerCase();
+    const isDefaultName = customName === 'prop-values';
+    const seqHeaderRE = /^(?:sample|seq(?:uencial|uence)?|amostra|n[uú]mero\s*sequencial|posi[cç][aã]o\s*original|#)$/i;
+    const defaultValHeaderRE = /^(?:rcs(?:\b|[\s_-].*)|prop-values|valor(?:es)?|value(?:s)?|resultado(?:s)?)$/i;
+    const stopRE = /^\s*"?(?:PROP-SUMMARY|end\s+AL300\s+SAMPLE|<!--|\[IMPORTED\b|(?:mean|m[eé]dia|average|std\.?\s*dev|desvio|min|m[ií]n|max|m[aá]x|total|summary)\s*[;,\t])/i;
+
+    const metaMap = {};
+    let offset = 0;
+    for (let i = 0; i < lines.length; i++) {
+      const rawLine = lines[i];
+      const lineClean = rawLine.replace(/\r$/, '');
+      const delim = lineClean.includes(';') ? ';' : lineClean.includes('\t') ? '\t' : lineClean.includes(',') ? ',' : null;
+
+      if (delim) {
+        const cells = split_csv_line(lineClean, delim);
+        const nonEmpty = cells.filter(c => c !== '');
+
+        if (sections.length === 0 && nonEmpty.length >= 1 && cells[0]) {
+          const key = cells[0].toLowerCase();
+          const val = cells[1] ?? '';
+          if (['p-order', 'type', 'procedure', 'operator', 'date', 'time', 'machine', 'máquina', 'maquina'].includes(key)) {
+            metaMap[key] = val;
+          }
+        }
+
+        if (nonEmpty.length >= 2) {
+          let valCol = -1;
+          let seqCol = -1;
+          let webCol = -1;
+          let posCol = -1;
+          let toolCol = -1;
+          let creaseCol = -1;
+          let uncreaseCol = -1;
+          let machineCol = -1;
+
+          for (let c = 0; c < cells.length; c++) {
+            const h = cells[c];
+            if (!h) continue;
+            const hl = h.toLowerCase();
+            if (seqCol < 0 && seqHeaderRE.test(h)) seqCol = c;
+            if (webCol < 0 && /^web$/i.test(h)) webCol = c;
+            if (posCol < 0 && /^position|posi[cç][aã]o$/i.test(h)) posCol = c;
+            if (toolCol < 0 && /^(?:creasing\s*tool|vincador|ferramenta)$/i.test(h)) toolCol = c;
+            if (creaseCol < 0 && /bending\s*force\s*crease$/i.test(h)) creaseCol = c;
+            if (uncreaseCol < 0 && /bending\s*force\s*uncrease$/i.test(h)) uncreaseCol = c;
+            if (machineCol < 0 && /^(?:machine|m[aá]quina|equipamento)$/i.test(h)) machineCol = c;
+            if (hl === customName) valCol = c;
+          }
+
+          if (valCol < 0 && isDefaultName) {
+            valCol = cells.findIndex(h => /^rcs(?:\b|[\s_-])/i.test(h));
+            if (valCol < 0 && seqCol >= 0) {
+              valCol = cells.findIndex((h, idx) => idx !== seqCol && defaultValHeaderRE.test(h));
+            }
+          }
+
+          const hasHeaderContext =
+            valCol >= 0 &&
+            (seqCol >= 0 || cells[valCol].toLowerCase() === customName) &&
+            parse_numeric_value(cells[valCol]).status === 'Valor não numérico';
+
+          if (hasHeaderContext) {
+            const colOffset = Math.max(0, lineClean.toLowerCase().indexOf(cells[valCol].toLowerCase()));
+            const startOffset = offset + colOffset;
+            sections.push({
+              index: sections.length + 1,
+              start: startOffset,
+              after: offset + lineClean.length,
+              headerLineIndex: i,
+              beginOffset: offset + rawLine.length + 1,
+              delim,
+              seqCol,
+              valCol,
+              webCol,
+              posCol,
+              toolCol,
+              creaseCol,
+              uncreaseCol,
+              machineCol,
+              metaMap: { ...metaMap },
+              columnName: cells[valCol],
+              ...line_position(text, startOffset)
+            });
+          }
+        }
+      }
+      offset += rawLine.length + 1;
+    }
+
+    for (let s = 0; s < sections.length; s++) {
+      const sec = sections[s];
+      const nextHeaderLine = s + 1 < sections.length ? sections[s + 1].headerLineIndex : lines.length;
+      const dataLines = [];
+      let curOffset = sec.beginOffset;
+
+      for (let i = sec.headerLineIndex + 1; i < nextHeaderLine; i++) {
+        const rawLine = lines[i];
+        const lineClean = rawLine.replace(/\r$/, '');
+        if (stopRE.test(lineClean)) break;
+        if (lineClean.trim() !== '' && !lineClean.includes(sec.delim)) break;
+        const cells = split_csv_line(lineClean, sec.delim);
+        dataLines.push({
+          rawLine,
+          lineClean,
+          cells,
+          isEmpty: cells.every(c => c === ''),
+          offset: curOffset,
+          lineNumber: i + 1
+        });
+        curOffset += rawLine.length + 1;
+      }
+
+      while (dataLines.length && dataLines[dataLines.length - 1].isEmpty) {
+        dataLines.pop();
+      }
+
+      sec.dataLines = dataLines;
+      sec.raw = [lines[sec.headerLineIndex].replace(/\r$/, ''), ...dataLines.map(d => d.lineClean)].join('\n');
+    }
+
+    return sections;
+  }
+
+  function extract_measurements_from_csv_table(sec) {
+    const result = [];
+    let firstWeb = '';
+    let firstPos = '';
+    let firstTool = '';
+    let firstMachine = '';
+
+    for (let i = 0; i < sec.dataLines.length; i++) {
+      const row = sec.dataLines[i];
+      if (row.isEmpty) {
+        result.push(record('', result.length, result.length + 1, row.offset));
+        continue;
+      }
+      let seq = result.length + 1;
+      if (sec.seqCol >= 0) {
+        const seqRaw = (row.cells[sec.seqCol] ?? '').trim();
+        if (!/^\d+$/.test(seqRaw)) {
+          throw new ParseError(
+            'A última seção está corrompida: era esperado um número sequencial na linha ' + (i + 1) + '.'
+          );
+        }
+        seq = Number(seqRaw);
+      }
+      const valRaw = row.cells[sec.valCol] ?? '';
+      const rec = record(valRaw, result.length, seq, row.offset);
+
+      if (sec.creaseCol >= 0) {
+        rec.crease = (row.cells[sec.creaseCol] ?? '').trim();
+        rec.creaseValue = parse_numeric_value(rec.crease).value;
+      }
+      if (sec.uncreaseCol >= 0) {
+        rec.uncrease = (row.cells[sec.uncreaseCol] ?? '').trim();
+        rec.uncreaseValue = parse_numeric_value(rec.uncrease).value;
+      }
+      if (!firstWeb && sec.webCol >= 0 && row.cells[sec.webCol]) firstWeb = row.cells[sec.webCol];
+      if (!firstPos && sec.posCol >= 0 && row.cells[sec.posCol]) firstPos = row.cells[sec.posCol];
+      if (!firstTool && sec.toolCol >= 0 && row.cells[sec.toolCol]) firstTool = row.cells[sec.toolCol];
+      if (!firstMachine && sec.machineCol >= 0 && row.cells[sec.machineCol]) firstMachine = row.cells[sec.machineCol];
+
+      result.push(rec);
+    }
+
+    const m = sec.metaMap || {};
+    const normalizedPOrder = String(m['p-order'] || '').replace(/\s+/g, ' ').trim();
+    const hasQdaStructure = Boolean(
+      normalizedPOrder || firstTool || sec.creaseCol >= 0 || /^rcs\b/i.test(sec.columnName || '')
+    );
+
+    const qdaMeta = hasQdaStructure
+      ? {
+        sourceType: 'csv',
+        pOrder: normalizedPOrder,
+        type: m['type'] || '',
+        procedure: m['procedure'] || '',
+        operator: m['operator'] || '',
+        date: format_date_br(m['date'] || ''),
+        dateISO: m['date'] || '',
+        time: m['time'] || '',
+        creasingTool: firstTool,
+        position: firstPos,
+        web: firstWeb,
+        machine: firstMachine || m['machine'] || m['máquina'] || m['maquina'] || '',
+        board: '',
+        roll: '',
+        rcsColumn: normalizedPOrder
+          ? resolve_rcs_column_name(normalizedPOrder, sec.columnName || '', m['type'] || '')
+          : sec.columnName || 'RCS CD Board'
+      }
+      : null;
+
+    return { records: result, qdaMeta };
+  }
+
+  function delimit_last_text_section(text, section) {
+    const tail = text.slice(section.after);
+    const bracket = /^\s*(?:=|:)?\s*\[/.exec(tail);
+    if (bracket) {
+      const begin = section.after + bracket[0].length;
+      let end = begin;
+      for (; end < text.length && text[end] !== ']'; end++) {
+        if (text[end] === '[') {
+          throw new ParseError('Bloco de valores aninhado não suportado.');
+        }
+      }
+      if (end === text.length) {
+        throw new ParseError('A última seção está corrompida: falta o fechamento ].');
+      }
+      return { raw: text.slice(begin, end), begin, end, format: 'list' };
+    }
+
+    const lineStart = text.lastIndexOf('\n', section.start - 1) + 1;
+    const prefix = text.slice(lineStart, section.start);
+    const suffixMatch = /^[ \t"']*([;, \t]*)(?:\r?\n|$)/.exec(tail);
+    if (!/^[ \t"']*$/.test(prefix) || !suffixMatch) {
+      throw new ParseError('A última ocorrência não possui delimitadores reconhecidos.');
+    }
+    const commaPadded = suffixMatch[1].includes(',');
+    const newline = text.indexOf('\n', section.after);
+    const begin = newline < 0 ? text.length : newline + 1;
+    const remaining = text.slice(begin);
+    const stop = /^\s*"?(?:PROP-SUMMARY|end\s+AL300\s+SAMPLE|<!--|\[IMPORTED\b).*$/gim;
+    const stops = [...remaining.matchAll(stop)];
+    const end = stops.length ? begin + stops[0].index : text.length;
+    return { raw: text.slice(begin, end), begin, end, format: 'pairs', commaPadded };
+  }
+
+  function extract_measurements_from_section(block) {
+    if (!block.raw.trim()) return [];
+
+    if (block.format === 'list') {
+      if (
+        !block.raw.includes(';') &&
+        !block.raw.includes('\n') &&
+        (/,.*,/.test(block.raw) || /\d,\s+[+-]?\d/.test(block.raw))
+      ) {
+        throw new ParseError('Lista ambígua. Use ponto e vírgula entre valores ou JSON com ponto decimal.');
+      }
+
+      let rawList = block.raw;
+      let leadOffset = 0;
+      const leadMatch = /^[ \t]*\r?\n/.exec(rawList);
+      if (leadMatch) {
+        leadOffset = leadMatch[0].length;
+        rawList = rawList.slice(leadOffset);
+      }
+
+      const pieces = [];
+      const sepRE = /;(?:[ \t]*\r?\n)?|\r?\n/g;
+      let lastIdx = 0;
+      let m;
+      while ((m = sepRE.exec(rawList)) !== null) {
+        pieces.push({ text: rawList.slice(lastIdx, m.index), offset: leadOffset + lastIdx });
+        lastIdx = m.index + m[0].length;
+      }
+      pieces.push({ text: rawList.slice(lastIdx), offset: leadOffset + lastIdx });
+
+      if (pieces.length > 1 && pieces[pieces.length - 1].text.trim() === '') {
+        pieces.pop();
+      }
+
+      return pieces.map((p, i) => record(p.text.trim(), i, i + 1, block.begin + p.offset));
+    }
+
+    const rawLines = block.raw.split('\n');
+    const allowCommaPadding = Boolean(block.commaPadded);
+    const lines = rawLines.map((rawLine, i) => {
+      const noCR = rawLine.replace(/\r$/, '');
+      const cleaned = clean_csv_padded_line(noCR, allowCommaPadding);
+      return {
+        raw: cleaned,
+        noCR,
+        rawLen: rawLine.length,
+        i
+      };
+    });
+
+    while (lines.length && !lines[lines.length - 1].raw.trim()) {
+      lines.pop();
+    }
+    if (!lines.length) return [];
+
+    const firstPairDelim = lines[0].noCR.includes(';') ? ';' : lines[0].noCR.includes('\t') ? '\t' : null;
+    if (firstPairDelim) {
+      const firstCells = split_csv_line(lines[0].noCR, firstPairDelim).filter(c => c !== '');
+      if (firstCells.length >= 2 && /^\d+$/.test(firstCells[0])) {
+        const result = [];
+        let offset = block.begin;
+        for (let i = 0; i < lines.length; i++) {
+          const cells = split_csv_line(lines[i].noCR, firstPairDelim);
+          const seq = (cells[0] ?? '').trim();
+          if (!/^\d+$/.test(seq)) {
+            throw new ParseError(
+              'A última seção está corrompida: era esperado um número sequencial na linha ' + (i + 1) + '.'
+            );
+          }
+          const valRaw = cells[1] ?? '';
+          result.push(record(valRaw.trim(), result.length, Number(seq), offset));
+          offset += lines[i].rawLen + 1;
+        }
+        return result;
+      }
+    }
+
+    const result = [];
+    let offset = block.begin;
+    for (let i = 0; i < lines.length; i += 2) {
+      const seq = lines[i].raw.trim();
+      if (!/^\d+$/.test(seq)) {
+        throw new ParseError(
+          'A última seção está corrompida: era esperado um número sequencial na linha ' + (i + 1) + '.'
+        );
+      }
+      const valLine = lines[i + 1];
+      const raw = valLine?.raw ?? '';
+      const valOffset = offset + lines[i].rawLen + 1;
+      result.push(
+        record(
+          raw.trim(),
+          result.length,
+          Number(seq),
+          valOffset,
+          valLine ? null : 'Par sequencial sem resultado.'
+        )
+      );
+      offset += lines[i].rawLen + 1 + (valLine ? valLine.rawLen + 1 : 0);
+    }
+    return result;
+  }
+
+  function structured_records(data) {
+    if (data === null) return [];
+    if (!Array.isArray(data)) throw new ParseError('prop-values deve conter uma lista.');
+    return data.map((v, i) => {
+      if (v !== null && typeof v === 'object') {
+        if (Array.isArray(v) || !Object.prototype.hasOwnProperty.call(v, 'value')) {
+          return record('', i, i + 1, null, 'Registro estruturado sem campo value.');
+        }
+        return record(v.value, i, v.sequence ?? i + 1);
+      }
+      return record(v, i);
+    });
+  }
+
+  function scan_json_keys(text, name, includeLinePos = true) {
+    const found = [];
+    const target = name.toLowerCase();
+    for (let i = 0; i < text.length; i++) {
+      if (text[i] === '"') {
+        const start = i;
+        for (i++; i < text.length; i++) {
+          if (text[i] === '\\') {
+            i++;
+            continue;
+          }
+          if (text[i] === '"') break;
+        }
+        const end = i + 1;
+        let j = end;
+        while (j < text.length && /\s/.test(text[j])) j++;
+        if (text[j] === ':' && JSON.parse(text.slice(start, end)).toLowerCase() === target) {
+          j++;
+          while (j < text.length && /\s/.test(text[j])) j++;
+          const begin = j;
+          let depth = 0;
+          let inString = false;
+          for (; j < text.length; j++) {
+            const c = text[j];
+            if (inString) {
+              if (c === '\\') j++;
+              else if (c === '"') inString = false;
+              continue;
+            }
+            if (c === '"') {
+              inString = true;
+              continue;
+            }
+            if (c === '[' || c === '{') depth++;
+            else if (c === ']' || c === '}') {
+              if (depth === 0) break;
+              depth--;
+              if (depth === 0) {
+                j++;
+                break;
+              }
+            } else if (depth === 0 && c === ',') break;
+          }
+          const pos = includeLinePos ? line_position(text, start + 1) : { offset: start + 1 };
+          found.push({
+            index: found.length + 1,
+            start: start + 1,
+            after: end - 1,
+            ...pos,
+            begin,
+            end: j,
+            raw: text.slice(begin, j)
+          });
+        }
+      }
+    }
+    return found;
+  }
+
+  function json_sections(text, name) {
+    JSON.parse(text);
+    return scan_json_keys(text, name, true);
+  }
+
+  function json_array_records(raw) {
+    const data = JSON.parse(raw);
+    const records = structured_records(data);
+    if (!Array.isArray(data)) return records;
+
+    const tokens = [];
+    let start = 1;
+    let depth = 0;
+    let inString = false;
+    for (let i = 1; i < raw.length; i++) {
+      const c = raw[i];
+      if (inString) {
+        if (c === '\\') i++;
+        else if (c === '"') inString = false;
+        continue;
+      }
+      if (c === '"') {
+        inString = true;
+        continue;
+      }
+      if (c === '[' || c === '{') depth++;
+      else if (c === ']' || c === '}') {
+        if (c === ']' && depth === 0) {
+          if (raw.slice(start, i).trim()) tokens.push(raw.slice(start, i).trim());
+          break;
+        }
+        depth--;
+      } else if (c === ',' && depth === 0) {
+        tokens.push(raw.slice(start, i).trim());
+        start = i + 1;
+      }
+    }
+
+    return records.map((r, i) => {
+      if (typeof data[i] === 'number') {
+        r.raw = tokens[i];
+      } else if (
+        data[i] &&
+        typeof data[i] === 'object' &&
+        !Array.isArray(data[i]) &&
+        typeof data[i].value === 'number'
+      ) {
+        const fields = scan_json_keys(tokens[i], 'value', false);
+        if (fields.length) r.raw = fields[fields.length - 1].raw.trim();
+      }
+      return r;
+    });
+  }
+
+  function get_attr_ci(node, attrName) {
+    if (!node.attributes) return null;
+    const target = attrName.toLowerCase();
+    for (const attr of node.attributes) {
+      if (attr.name.toLowerCase() === target) return attr.value;
+    }
+    return null;
+  }
+
+  function parse_file(text, options = {}) {
+    const name = options.section || defaults.section;
+    let sections = [];
+    let last = null;
+    let block = null;
+    let records = [];
+    let detectedColumn = null;
+    let qdaMeta = null;
+    let machineFailures = [];
+    const alerts = [];
+
+    try {
+      if (/^\s*[\[{]/.test(text)) {
+        try {
+          sections = json_sections(text, name);
+        } catch (e) {
+          sections = find_all_prop_values_sections(text, name);
+          throw new ParseError('JSON corrompido. Nenhuma seção anterior será utilizada.');
+        }
+        last = select_last_prop_values_section(sections);
+        if (last) {
+          block = { raw: last.raw, begin: last.begin, end: last.end, format: 'json' };
+          records = json_array_records(last.raw);
+        }
+      } else if (/^(?:\s|<!--[\s\S]*?-->)*<[A-Za-z_?]/.test(text)) {
+        if (typeof DOMParser === 'undefined') {
+          throw new ParseError('XML requer o navegador para leitura estruturada.');
+        }
+        const re = new RegExp('<(?:[A-Za-z_][\\w.-]*:)?' + escapeRE(name) + '(?=[\\s/>])', 'gi');
+        sections = [...text.matchAll(re)].map((m, i) => ({
+          index: i + 1,
+          start: m.index,
+          ...line_position(text, m.index)
+        }));
+        last = select_last_prop_values_section(sections);
+
+        if (/<!DOCTYPE|<!ENTITY/i.test(text)) {
+          throw new ParseError('XML com DTD ou entidades não é permitido.');
+        }
+        const doc = new DOMParser().parseFromString(text, 'application/xml');
+        if (doc.getElementsByTagName('parsererror').length) {
+          throw new ParseError('XML corrompido. Nenhuma seção anterior será utilizada.');
+        }
+        const nodes = [...doc.getElementsByTagName('*')].filter(
+          n => n.localName.toLowerCase() === name.toLowerCase()
+        );
+        if (nodes.length !== sections.length) {
+          throw new ParseError('Não foi possível confirmar a ordem física dos elementos XML.');
+        }
+        if (last) {
+          const node = nodes[nodes.length - 1];
+          block = {
+            raw: new XMLSerializer().serializeToString(node),
+            begin: last.start,
+            format: 'xml'
+          };
+          if (node.children.length) {
+            records = [...node.children].map((n, i) => {
+              const attrVal = get_attr_ci(n, 'value');
+              const attrSeq = get_attr_ci(n, 'sequence');
+              const vals = [...n.children].filter(c => c.localName.toLowerCase() === 'value');
+              const hasAttrVal = attrVal !== null;
+              const raw = hasAttrVal
+                ? attrVal
+                : vals.length === 1
+                  ? vals[0].textContent
+                  : n.children.length
+                    ? ''
+                    : n.textContent;
+              const err =
+                !hasAttrVal && n.children.length && vals.length !== 1
+                  ? 'Elemento sem um campo value único.'
+                  : null;
+              return record(raw, i, attrSeq ?? i + 1, null, err);
+            });
+          } else {
+            records = extract_measurements_from_section({
+              raw: node.textContent,
+              begin: last.start,
+              format: 'list'
+            });
+          }
+        }
+      } else {
+        sections = find_all_prop_values_sections(text, name);
+        last = select_last_prop_values_section(sections);
+        if (last) {
+          try {
+            block = delimit_last_text_section(text, last);
+            records = extract_measurements_from_section(block);
+
+            if (block.format === 'pairs') {
+              const ctx = extract_al300_context(text, sections);
+              qdaMeta = ctx.qdaMeta;
+              if (ctx.creaseMap.size || ctx.uncreaseMap.size) {
+                const rcsSeqSet = new Set(records.map(r => r.sequence));
+                for (const r of records) {
+                  const cRec = ctx.creaseMap.get(r.sequence);
+                  const uRec = ctx.uncreaseMap.get(r.sequence);
+                  if (cRec) {
+                    r.crease = cRec.raw;
+                    r.creaseValue = cRec.value;
+                  }
+                  if (uRec) {
+                    r.uncrease = uRec.raw;
+                    r.uncreaseValue = uRec.value;
+                  }
+                }
+                const allAuxSeqs = new Set([...ctx.creaseMap.keys(), ...ctx.uncreaseMap.keys()]);
+                for (const seq of [...allAuxSeqs].sort((a, b) => a - b)) {
+                  const cRec = ctx.creaseMap.get(seq);
+                  const uRec = ctx.uncreaseMap.get(seq);
+                  const cBad = cRec && (cRec.value === null || cRec.value < 0 || cRec.status !== 'Válido');
+                  const uBad = uRec && (uRec.value === null || uRec.value < 0 || uRec.status !== 'Válido');
+                  if (!rcsSeqSet.has(seq) && (cBad || uBad)) {
+                    machineFailures.push({
+                      sequence: seq,
+                      position: null,
+                      raw: 'N/A',
+                      value: null,
+                      crease: cRec ? cRec.raw : '',
+                      uncrease: uRec ? uRec.raw : '',
+                      status: 'Erro de leitura na força (-1)',
+                      reason:
+                        'Falha de leitura na máquina: Bending Force Crease (' +
+                        (cRec ? cRec.raw : 'N/A') +
+                        ') / Uncrease (' +
+                        (uRec ? uRec.raw : 'N/A') +
+                        ') inválido.'
+                    });
+                  }
+                }
+              }
+            }
+          } catch (textErr) {
+            const csvSections = find_csv_table_sections(text, name);
+            if (csvSections.length) {
+              sections = csvSections;
+              last = select_last_prop_values_section(sections);
+              block = { raw: last.raw, begin: last.beginOffset, format: 'csv' };
+              detectedColumn = last.columnName;
+              const extracted = extract_measurements_from_csv_table(last);
+              records = extracted.records;
+              qdaMeta = extracted.qdaMeta;
+            } else {
+              throw textErr;
+            }
+          }
+        } else {
+          const csvSections = find_csv_table_sections(text, name);
+          if (csvSections.length) {
+            sections = csvSections;
+            last = select_last_prop_values_section(sections);
+            block = { raw: last.raw, begin: last.beginOffset, format: 'csv' };
+            detectedColumn = last.columnName;
+            const extracted = extract_measurements_from_csv_table(last);
+            records = extracted.records;
+            qdaMeta = extracted.qdaMeta;
+          }
+        }
+      }
+
+      if (!last) {
+        throw new ParseError(
+          'Nenhuma seção ' +
+          name +
+          ' foi encontrada no arquivo. Verifique se o arquivo selecionado foi gerado corretamente pelo sistema RCS.'
+        );
+      }
+      if (!records.length) {
+        alerts.push(
+          'A última seção ' +
+          name +
+          ' foi encontrada, mas não contém valores de medição. As seções anteriores não foram utilizadas.'
+        );
+      }
+
+      return {
+        totalSections: sections.length,
+        selectedSection: last.index,
+        sectionPosition: { offset: last.offset, line: last.line, column: last.column },
+        rawSection: block.raw,
+        records,
+        alerts,
+        format: block.format,
+        detectedColumn,
+        qdaMeta,
+        machineFailures
+      };
+    } catch (e) {
+      const refSection = last || (sections.length ? sections[sections.length - 1] : null);
+      throw new ParseError(e.message, {
+        totalSections: sections.length,
+        selectedSection: sections.length || null,
+        sectionPosition: refSection
+          ? { offset: refSection.offset, line: refSection.line, column: refSection.column }
+          : null,
+        rawSection: block?.raw ?? '',
+        records: [],
+        alerts: [e.message]
+      });
+    }
+  }
+
+  function quantile(sorted, p) {
+    if (!sorted.length) return null;
+    const h = (sorted.length - 1) * p;
+    const l = Math.floor(h);
+    const f = h - l;
+    return sorted[l] + (sorted[Math.min(l + 1, sorted.length - 1)] - sorted[l]) * f;
+  }
+
+  function stats(values, preSorted = null) {
+    if (!values.length) return { mean: null, median: null, sd: null };
+    const mean = values.reduce((a, b) => a + b, 0) / values.length;
+    const sorted = preSorted || [...values].sort((a, b) => a - b);
+    return {
+      mean,
+      median: quantile(sorted, 0.5),
+      sd:
+        values.length > 1
+          ? Math.sqrt(values.reduce((a, b) => a + (b - mean) ** 2, 0) / (values.length - 1))
+          : null
+    };
+  }
+
+  function friendly_status(status) {
+    if (status === 'Erro de leitura na força (-1)' || status === 'Valor negativo') {
+      return 'Máquina não leu (-1)';
+    }
+    if (status === 'Outlier superior') {
+      return 'RCS muito alto';
+    }
+    if (status === 'Outlier inferior') {
+      return 'RCS muito baixo';
+    }
+    return status;
+  }
+
+  function diagnose_anomaly(item, qdaMeta = null) {
+    const mach = qdaMeta?.machine ? ` (${qdaMeta.machine})` : '';
+    const tool = qdaMeta?.creasingTool ? ` (${qdaMeta.creasingTool})` : '';
+    if (item.status === 'Erro de leitura na força (-1)' || item.status === 'Valor negativo') {
+      return `A máquina${mach} não conseguiu ler a tira (erro -1). Verificar sensor ou posição da amostra.`;
+    }
+    if (item.status === 'Outlier superior') {
+      return `Vinco fraco (força na dobra muito alta). Verificar desgaste, alinhamento ou pressão do vincador${tool}.`;
+    }
+    if (item.status === 'Outlier inferior') {
+      return `Vinco muito marcado (queda de força na dobra). Verificar excesso de pressão do vincador${tool} ou cartão.`;
+    }
+    return item.reason || item.status;
+  }
+
+  function validate_measurements(parsed, options = {}) {
+    const cfg = { ...defaults, ...options };
+    const records = parsed.records.map(r => ({ ...r, selected: false }));
+    const alerts = [...parsed.alerts];
+
+    for (const r of records) {
+      if (r.status === 'Válido') {
+        if ((r.creaseValue !== null && r.creaseValue < 0) || (r.uncreaseValue !== null && r.uncreaseValue < 0)) {
+          r.status = 'Erro de leitura na força (-1)';
+          r.reason = 'Força Bending Force Crease ou Uncrease negativa (-1).';
+        } else if (!cfg.allowZero && r.value === 0) {
+          r.status = 'Erro de leitura';
+          r.reason = 'Zero não permitido pela configuração do processo.';
+        } else if (cfg.max !== null && r.value > cfg.max) {
+          r.status = 'Erro de leitura';
+          r.reason = 'Acima do limite máximo do processo.';
+        }
+      }
+    }
+
+    const base = records.filter(r => r.status === 'Válido').map(r => r.value);
+    const sorted = [...base].sort((a, b) => a - b);
+    const q1 = quantile(sorted, 0.25);
+    const median = quantile(sorted, 0.5);
+    const q3 = quantile(sorted, 0.75);
+    const iqr = q1 === null ? null : q3 - q1;
+    const lower = iqr === null ? null : q1 - cfg.multiplier * iqr;
+    const upper = iqr === null ? null : q3 + cfg.multiplier * iqr;
+    const apply = base.length >= 4 && iqr > 0;
+
+    if (base.length < 4) {
+      alerts.push('Menos de 4 valores válidos: IQR apenas informativo, sem exclusão estatística.');
+    } else if (iqr === 0) {
+      alerts.push('IQR igual a zero: baixa variabilidade. Nenhum valor será excluído automaticamente pelo IQR.');
+    }
+
+    for (const r of records) {
+      if (r.status === 'Válido' && apply) {
+        if (r.value < lower) {
+          r.status = 'Outlier inferior';
+          r.reason = 'Abaixo do limite inferior do IQR.';
+        } else if (r.value > upper) {
+          r.status = 'Outlier superior';
+          r.reason = 'Acima do limite superior do IQR.';
+        }
+      }
+    }
+
+    const valid = [];
+    let invalidCount = 0;
+    let outlierCount = 0;
+    for (const r of records) {
+      if (r.status === 'Válido') {
+        valid.push(r);
+      } else if (r.status.startsWith('Outlier')) {
+        outlierCount++;
+      } else {
+        invalidCount++;
+      }
+    }
+
+    const selectedCount = Math.min(valid.length, cfg.required);
+    for (let i = 0; i < selectedCount; i++) {
+      valid[i].selected = true;
+    }
+
+    if (valid.length < cfg.required) {
+      alerts.push(
+        'Foram encontradas ' +
+        valid.length +
+        ' medições válidas; são necessárias ' +
+        cfg.required +
+        '. Nenhuma seção anterior foi utilizada.'
+      );
+    }
+
+    const machineFailures = parsed.machineFailures || [];
+    const rcsRejections = records
+      .filter(r => r.status !== 'Válido')
+      .map(r => ({
+        sequence: r.sequence,
+        position: r.position,
+        raw: r.raw || '(ausente)',
+        value: r.value,
+        crease: r.crease || '',
+        uncrease: r.uncrease || '',
+        status: r.status,
+        reason: r.reason
+      }));
+
+    const anomalies = [...machineFailures, ...rcsRejections]
+      .sort((a, b) => (a.sequence ?? 0) - (b.sequence ?? 0))
+      .map(item => ({
+        ...item,
+        friendlyStatus: friendly_status(item.status),
+        diagnosis: diagnose_anomaly(item, parsed.qdaMeta)
+      }));
+
+    const validValues = valid.map(r => r.value);
+    const sortedValid = apply ? sorted.filter(v => v >= lower && v <= upper) : sorted;
+
+    const result = {
+      ...parsed,
+      records,
+      alerts,
+      cfg,
+      q1,
+      median,
+      q3,
+      iqr,
+      lower,
+      upper,
+      iqrApplied: apply,
+      before: stats(base, sorted),
+      after: stats(validValues, sortedValid),
+      invalid: invalidCount,
+      outliers: outlierCount,
+      valid: valid.length,
+      selected: selectedCount,
+      anomalies
+    };
+
+    if (
+      [
+        q1,
+        median,
+        q3,
+        iqr,
+        lower,
+        upper,
+        result.before.mean,
+        result.before.sd,
+        result.after.mean,
+        result.after.sd
+      ].some(v => v !== null && !Number.isFinite(v))
+    ) {
+      throw new ParseError('Valores extremos impedem um cálculo estatístico seguro. CSV bloqueado.');
+    }
+
+    return result;
+  }
+
+  function decimal_string(raw, value, decimals, decimal) {
+    if (decimals !== null) return value.toFixed(decimals).replace('.', decimal);
+    return String(raw).trim().replace(/^\+/, '').replace(/[.,]/, decimal);
+  }
+
+  function csv_escape(v, delimiter) {
+    let s = String(v ?? '');
+    const isNegativeNumber = /^\s*-[0-9.,]/.test(s) && Number.isFinite(Number(s.trim().replace(',', '.')));
+    if (/^[\s]*[=+@|%-]/.test(s) && !isNegativeNumber) {
+      s = "'" + s;
+    }
+    return /["\r\n]/.test(s) || s.includes(delimiter) ? '"' + s.replace(/"/g, '""') + '"' : s;
+  }
+
+  function make_qda_csv(result, confirmed = false, customDecimal = null) {
+    const c = result.cfg;
+    if (result.selected < c.required && !(c.allowIncomplete && confirmed)) {
+      throw new Error('CSV incompleto bloqueado.');
+    }
+    if (!result.selected) {
+      throw new Error('Não há medições válidas para exportar.');
+    }
+
+    const m = result.qdaMeta || {};
+    const delim = ';';
+    const dec = customDecimal !== null ? customDecimal : c.decimals !== null ? c.decimal : '.';
+    const rcsHeader = m.rcsColumn || result.detectedColumn || 'RCS CD Board';
+
+    const lines = [
+      ['P-order', m.pOrder || '', '', '', '', '', '', ''],
+      ['Type', m.type || '', '', '', '', '', '', ''],
+      ['Procedure', m.procedure || '', '', '', '', '', '', ''],
+      ['Operator', m.operator || '', '', '', '', '', '', ''],
+      ['Date', m.date || '', '', '', '', '', '', ''],
+      ['Time', m.time || '', '', '', '', '', '', ''],
+      ['', '', '', '', '', '', '', ''],
+      ['', '', '', '', '', '', '', ''],
+      ['', '', '', '', '', '', '', ''],
+      ['', '', '', '', '', '', '', ''],
+      ['', '', '', '', '', '', '', ''],
+      [
+        'Sample',
+        'Web',
+        'Position',
+        'Creasing tool',
+        '',
+        rcsHeader,
+        'Bending Force Crease',
+        'Bending Force Uncrease'
+      ]
+    ];
+
+    let sampleNum = 0;
+    for (const r of result.records) {
+      if (!r.selected) continue;
+      sampleNum++;
+      lines.push([
+        sampleNum,
+        m.web || 'Web 1',
+        m.position || '1.First',
+        m.creasingTool || '',
+        '',
+        decimal_string(r.raw, r.value, c.decimals, dec),
+        r.crease ?? '',
+        r.uncrease ?? ''
+      ]);
+    }
+
+    return lines.map(row => row.map(v => csv_escape(v, delim)).join(delim)).join('\r\n') + '\r\n';
+  }
+
+  function pdf_clean_text(str) {
+    return String(str ?? '')
+      .replace(/[\u2013\u2014\u2212]/g, '-')
+      .replace(/[\u2022\u00b7]/g, '-')
+      .replace(/[^\x20-\xFF]/g, '?');
+  }
+
+  function pdf_escape(str) {
+    return pdf_clean_text(str)
+      .replace(/\\/g, '\\\\')
+      .replace(/\(/g, '\\(')
+      .replace(/\)/g, '\\)');
+  }
+
+  function pdf_wrap_text(str, maxChars) {
+    const clean = pdf_clean_text(str).trim();
+    if (!clean) return [''];
+    const words = clean.split(/\s+/);
+    const lines = [];
+    let current = '';
+    for (const w of words) {
+      if (!current) {
+        current = w;
+      } else if (current.length + 1 + w.length <= maxChars) {
+        current += ' ' + w;
+      } else {
+        lines.push(current);
+        current = w;
+      }
+    }
+    if (current) lines.push(current);
+    return lines;
+  }
+
+  function make_error_report_pdf(result) {
+    const c = result.cfg;
+    const m = result.qdaMeta || {};
+    const anomalies = result.anomalies || [];
+    const sensorFailures = (result.machineFailures || []).length;
+    const totalCycles = result.records.length + sensorFailures;
+    const goodSamples = result.valid;
+    const fmtVal = (v, d = 1) =>
+      v === null || v === undefined || !Number.isFinite(Number(v))
+        ? 'N/A'
+        : Number(v).toFixed(d).replace('.', c.decimal || ',');
+
+    const pageW = 595.28;
+    const pageH = 841.89;
+    const margin = 32;
+    const contentW = pageW - margin * 2;
+    const pages = [];
+    let cmds = [];
+    let y = pageH - margin;
+
+    const fitText = (str, maxLen) => {
+      const s = pdf_clean_text(str).trim();
+      if (!s) return 'Não informado';
+      return s.length > maxLen ? s.slice(0, maxLen - 3) + '...' : s;
+    };
+
+    const startPage = isFirst => {
+      cmds = [];
+      y = pageH - margin;
+
+      const bannerH = isFirst ? 56 : 36;
+      cmds.push('0.024 0.204 0.365 rg');
+      cmds.push(`${margin} ${y - bannerH} ${contentW} ${bannerH} re f`);
+      cmds.push('1 1 1 rg');
+      cmds.push(
+        `BT /F2 ${isFirst ? 14 : 11} Tf ${margin + 14} ${y - 22} Td (${pdf_escape(
+          'RELATÓRIO DE FALHAS - VINCADOR E MÁQUINA'
+        )}) Tj ET`
+      );
+      if (isFirst) {
+        const sub = `Ordem (P-order): ${m.pOrder || 'N/A'}   |   Data: ${m.date || 'N/A'} às ${m.time || 'N/A'
+          }   |   Operador: ${m.operator || 'N/A'}`;
+        cmds.push(`BT /F1 9.5 Tf ${margin + 14} ${y - 41} Td (${pdf_escape(sub)}) Tj ET`);
+      }
+      y -= bannerH + 16;
+    };
+
+    const finishPage = () => {
+      pages.push(cmds.join('\n'));
+    };
+
+    const drawBox = (x, topY, w, h, fillRgb, strokeRgb) => {
+      if (fillRgb) {
+        cmds.push(`${fillRgb} rg ${x} ${topY - h} ${w} ${h} re f`);
+      }
+      if (strokeRgb) {
+        cmds.push(`${strokeRgb} RG 0.8 w ${x} ${topY - h} ${w} ${h} re S`);
+      }
+    };
+
+    const drawText = (text, x, baselineY, font = 'F1', size = 9, rgb = '0.094 0.173 0.259') => {
+      cmds.push(`${rgb} rg BT /${font} ${size} Tf ${x} ${baselineY} Td (${pdf_escape(text)}) Tj ET`);
+    };
+
+    startPage(true);
+
+    // 1. Onde ocorreu (3 large boxes per row, zero truncation)
+    drawText('1. ONDE OCORREU (EQUIPAMENTO E MATERIAL)', margin, y, 'F2', 10.5, '0.027 0.357 0.698');
+    y -= 8;
+
+    const col3W = (contentW - 16) / 3;
+    const row1Items = [
+      ['VINCADOR (FERRAMENTA)', m.creasingTool || 'Não informado', '0.024 0.204 0.365'],
+      ['MÁQUINA', m.machine || 'Não informado', '0.024 0.204 0.365'],
+      ['ORDEM / POSIÇÃO', [m.pOrder, m.web, m.position].filter(Boolean).join(' - ') || 'N/A', '0.094 0.173 0.259']
+    ];
+    const row2Items = [
+      ['PRODUTO / PROCEDIMENTO', m.procedure || m.type || 'Não informado', '0.094 0.173 0.259'],
+      ['PAPEL / FORNECEDOR', m.board || 'Não informado', '0.094 0.173 0.259'],
+      ['BOBINA / CORTE', m.roll || 'Não informado', '0.094 0.173 0.259']
+    ];
+
+    for (const rowItems of [row1Items, row2Items]) {
+      for (let col = 0; col < 3; col++) {
+        const [lbl, val, color] = rowItems[col];
+        const bx = margin + col * (col3W + 8);
+        drawBox(bx, y, col3W, 38, '0.945 0.965 0.984', '0.82 0.87 0.91');
+        drawText(lbl, bx + 8, y - 13, 'F2', 7.5, '0.329 0.404 0.478');
+        drawText(fitText(val, 34), bx + 8, y - 28, 'F2', 9.5, color);
+      }
+      y -= 44;
+    }
+    y -= 6;
+
+    // 2. Placar simples da corrida
+    drawText('2. PLACAR GERAL DA CORRIDA', margin, y, 'F2', 10.5, '0.027 0.357 0.698');
+    y -= 8;
+
+    const col4W = (contentW - 18) / 4;
+    const kpis = [
+      ['Total de Amostras', `${totalCycles} lidas`, '0.027 0.357 0.698'],
+      ['Amostras Boas', `${goodSamples} boas`, '0.075 0.451 0.298'],
+      ['Máquina Não Leu (-1)', `${sensorFailures} falha${sensorFailures === 1 ? '' : 's'}`, sensorFailures ? '0.710 0.169 0.220' : '0.075 0.451 0.298'],
+      ['RCS Fora do Padrão', `${result.outliers + result.invalid} amostra${result.outliers + result.invalid === 1 ? '' : 's'}`, result.outliers + result.invalid ? '0.608 0.325 0.000' : '0.075 0.451 0.298']
+    ];
+
+    for (let col = 0; col < 4; col++) {
+      const [lbl, val, color] = kpis[col];
+      const bx = margin + col * (col4W + 6);
+      drawBox(bx, y, col4W, 40, '1 1 1', '0.82 0.87 0.91');
+      drawText(lbl, bx + 8, y - 14, 'F1', 8, '0.329 0.404 0.478');
+      drawText(val, bx + 8, y - 31, 'F2', 12, color);
+    }
+    y -= 46;
+
+    const normalRangeText = `Faixa normal esperada de RCS nesta corrida: de ${fmtVal(result.lower)} até ${fmtVal(
+      result.upper
+    )}   |   Média das amostras boas: ${fmtVal(result.after.mean)}`;
+    drawBox(margin, y, contentW, 24, '0.945 0.965 0.984', '0.82 0.87 0.91');
+    drawText(normalRangeText, margin + 10, y - 15, 'F2', 8.8, '0.094 0.173 0.259');
+    y -= 34;
+
+    // 3. Resumo direto em linguagem simples
+    drawText('3. RESUMO DIRETO DO QUE FICOU RUIM', margin, y, 'F2', 10.5, '0.027 0.357 0.698');
+    y -= 8;
+
+    const summaryBullets = [];
+    const negSeqs = anomalies
+      .filter(a => a.status === 'Erro de leitura na força (-1)' || a.status === 'Valor negativo')
+      .map(a => `nº ${a.sequence}`);
+    const highSeqs = anomalies.filter(a => a.status === 'Outlier superior').map(a => `nº ${a.sequence}`);
+    const lowSeqs = anomalies.filter(a => a.status === 'Outlier inferior').map(a => `nº ${a.sequence}`);
+
+    if (negSeqs.length) {
+      summaryBullets.push(
+        `- Erro de leitura na máquina (${m.machine || 'AL300'}): ${negSeqs.length} amostra(s) (${negSeqs.join(
+          ', '
+        )}) deram valor -1 (a máquina não conseguiu ler a força da tira).`
+      );
+    }
+    if (highSeqs.length) {
+      summaryBullets.push(
+        `- RCS muito alto no vincador (${m.creasingTool || 'N/A'}): ${highSeqs.length} amostra(s) (${highSeqs.join(
+          ', '
+        )}) passaram do limite máximo (${fmtVal(result.upper)}), indicando vinco fraco.`
+      );
+    }
+    if (lowSeqs.length) {
+      summaryBullets.push(
+        `- RCS muito baixo no vincador (${m.creasingTool || 'N/A'}): ${lowSeqs.length} amostra(s) (${lowSeqs.join(
+          ', '
+        )}) ficaram abaixo do mínimo (${fmtVal(result.lower)}), indicando vinco muito profundo.`
+      );
+    }
+    if (!summaryBullets.length) {
+      summaryBullets.push('- Nenhuma falha encontrada: todas as amostras lidas ficaram dentro da faixa esperada.');
+    }
+
+    const wrappedBullets = summaryBullets.flatMap(b => pdf_wrap_text(b, 92));
+    const summaryBoxH = wrappedBullets.length * 13 + 14;
+    drawBox(
+      margin,
+      y,
+      contentW,
+      summaryBoxH,
+      anomalies.length ? '1.0 0.976 0.937' : '0.945 0.988 0.965',
+      anomalies.length ? '0.90 0.76 0.55' : '0.70 0.88 0.78'
+    );
+    wrappedBullets.forEach((line, idx) => {
+      drawText(line, margin + 10, y - 15 - idx * 13, 'F2', 8.6, '0.15 0.20 0.25');
+    });
+    y -= summaryBoxH + 14;
+
+    // 4. Tabela simples e direta das amostras ruins (5 colunas largas)
+    drawText(
+      `4. AMOSTRAS COM PROBLEMA (${anomalies.length} OCORRÊNCIA${anomalies.length === 1 ? '' : 'S'})`,
+      margin,
+      y,
+      'F2',
+      10.5,
+      '0.027 0.357 0.698'
+    );
+    y -= 8;
+
+    const cols = [
+      { title: 'Amostra', w: 54 },
+      { title: 'O que ficou ruim', w: 112 },
+      { title: 'Valor RCS', w: 96 },
+      { title: 'Forças (Vinco / Sem)', w: 96 },
+      { title: 'Causa provável / O que verificar', w: contentW - 358 }
+    ];
+
+    const drawTableHeader = () => {
+      const thH = 22;
+      drawBox(margin, y, contentW, thH, '0.024 0.204 0.365', null);
+      let cx = margin + 6;
+      for (const col of cols) {
+        drawText(col.title, cx, y - 14, 'F2', 8.2, '1 1 1');
+        cx += col.w;
+      }
+      y -= thH;
+    };
+
+    drawTableHeader();
+
+    if (!anomalies.length) {
+      drawBox(margin, y, contentW, 28, '0.945 0.988 0.965', '0.82 0.87 0.91');
+      drawText(
+        'Todas as amostras desta corrida foram aprovadas sem erros.',
+        margin + 10,
+        y - 17,
+        'F2',
+        9,
+        '0.075 0.451 0.298'
+      );
+      y -= 28;
+    } else {
+      for (let idx = 0; idx < anomalies.length; idx++) {
+        const a = anomalies[idx];
+        const diagLines = pdf_wrap_text(a.diagnosis || '', 36);
+        const rowH = Math.max(26, diagLines.length * 11 + 10);
+
+        if (y - rowH < margin + 30) {
+          finishPage();
+          startPage(false);
+          drawTableHeader();
+        }
+
+        const bg = idx % 2 === 0 ? '1 1 1' : '0.965 0.976 0.988';
+        drawBox(margin, y, contentW, rowH, bg, '0.85 0.89 0.92');
+
+        const isOutlier = String(a.status).startsWith('Outlier');
+        const statusColor = isOutlier ? '0.608 0.325 0.000' : '0.710 0.169 0.220';
+        const problemLabel = a.friendlyStatus || friendly_status(a.status);
+
+        let rcsDisplay = 'Sem leitura';
+        if (a.value !== null && a.value !== undefined) {
+          if (a.status === 'Outlier superior') {
+            rcsDisplay = `${fmtVal(a.value, 1)} (máx ${fmtVal(result.upper, 1)})`;
+          } else if (a.status === 'Outlier inferior') {
+            rcsDisplay = `${fmtVal(a.value, 1)} (mín ${fmtVal(result.lower, 1)})`;
+          } else {
+            rcsDisplay = fmtVal(a.value, 1);
+          }
+        }
+
+        const forcesDisplay =
+          a.crease || a.uncrease ? `${a.crease || '-'} / ${a.uncrease || '-'}` : 'Não disponível';
+
+        let cx = margin + 6;
+        drawText(`Nº ${a.sequence ?? '-'}`, cx, y - 15, 'F2', 9);
+        cx += cols[0].w;
+        drawText(fitText(problemLabel, 24), cx, y - 15, 'F2', 8.5, statusColor);
+        cx += cols[1].w;
+        drawText(rcsDisplay, cx, y - 15, 'F2', 8.5);
+        cx += cols[2].w;
+        drawText(forcesDisplay, cx, y - 15, 'F1', 8.5);
+        cx += cols[3].w;
+
+        diagLines.forEach((line, lIdx) => {
+          drawText(line, cx, y - 13 - lIdx * 11, 'F1', 8, '0.15 0.22 0.28');
+        });
+
+        y -= rowH;
+      }
+    }
+
+    finishPage();
+
+    // Assemble multi-page PDF-1.4 document
+    const objects = [];
+    const addObj = body => {
+      objects.push(body);
+      return objects.length;
+    };
+
+    const fontRegularId = addObj('<< /Type /Font /Subtype /Type1 /BaseFont /Helvetica /Encoding /WinAnsiEncoding >>');
+    const fontBoldId = addObj('<< /Type /Font /Subtype /Type1 /BaseFont /Helvetica-Bold /Encoding /WinAnsiEncoding >>');
+    const pagesRootId = addObj(''); // placeholder for /Pages
+    const pageIds = [];
+
+    for (let i = 0; i < pages.length; i++) {
+      const footerCmd = `0.4 0.45 0.5 rg BT /F1 7.5 Tf ${margin} 18 Td (${pdf_escape(
+        `RCS Local v${VERSION} - Relatório gerado localmente em ${new Date().toLocaleString('pt-BR')} - Página ${i + 1
+        } de ${pages.length}`
+      )}) Tj ET`;
+      const streamData = pages[i] + '\n' + footerCmd;
+      const contentId = addObj(`<< /Length ${streamData.length} >>\nstream\n${streamData}\nendstream`);
+      const pageId = addObj(
+        `<< /Type /Page /Parent ${pagesRootId} 0 R /MediaBox [0 0 ${pageW} ${pageH}] /Resources << /Font << /F1 ${fontRegularId} 0 R /F2 ${fontBoldId} 0 R >> >> /Contents ${contentId} 0 R >>`
+      );
+      pageIds.push(pageId);
+    }
+
+    objects[pagesRootId - 1] = `<< /Type /Pages /Kids [${pageIds.map(id => `${id} 0 R`).join(' ')}] /Count ${pageIds.length
+      } >>`;
+    const catalogId = addObj(`<< /Type /Catalog /Pages ${pagesRootId} 0 R >>`);
+
+    let pdf = '%PDF-1.4\n%\xE2\xE3\xCF\xD3\n';
+    const offsets = [0];
+    for (let i = 0; i < objects.length; i++) {
+      offsets.push(pdf.length);
+      pdf += `${i + 1} 0 obj\n${objects[i]}\nendobj\n`;
+    }
+
+    const xrefOffset = pdf.length;
+    pdf += `xref\n0 ${objects.length + 1}\n0000000000 65535 f \n`;
+    for (let i = 1; i <= objects.length; i++) {
+      pdf += String(offsets[i]).padStart(10, '0') + ' 00000 n \n';
+    }
+    pdf += `trailer\n<< /Size ${objects.length + 1} /Root ${catalogId} 0 R >>\nstartxref\n${xrefOffset}\n%%EOF\n`;
+
+    const bytes = new Uint8Array(pdf.length);
+    for (let i = 0; i < pdf.length; i++) {
+      bytes[i] = pdf.charCodeAt(i) & 0xff;
+    }
+    return bytes;
+  }
+
+  const FACTORIES = Object.freeze([
+    'Arganda',
+    'Beijing',
+    'Binh Duong',
+    'Budaors',
+    'Chakan',
+    'Châteaubriant',
+    'Denton',
+    'Fjallbacka',
+    'Gornji',
+    'Gotemba',
+    'Hjörring',
+    'Hohhot',
+    'Hohhot AddMat',
+    'Imatra',
+    'Izmir',
+    'Jeddah',
+    'Kunshan',
+    'Lahore',
+    'LaRioja',
+    'Limburg',
+    'Mexicali',
+    'MonteMor',
+    'Nairobi',
+    'PilotPlant',
+    'PilotPlant 118',
+    'Pinetown',
+    'PontaGrossa',
+    'Queretaro',
+    'Rayong',
+    'Rubiera',
+    'Sevilla',
+    'Sezzadio',
+    'Skoghall',
+    'Sunne',
+    'Taipei',
+    'Vancouver'
+  ]);
+
+  function parse_tool_and_package(creasingTool, fallbackType = '') {
+    const raw = String(creasingTool ?? '').trim();
+    if (!raw) {
+      return { vincador: 'N/A', embalagem: String(fallbackType ?? '').trim() || 'N/A' };
+    }
+    const idx = raw.indexOf('_');
+    if (idx > 0 && idx < raw.length - 1) {
+      return {
+        vincador: raw.slice(0, idx).trim(),
+        embalagem: raw.slice(idx + 1).trim()
+      };
+    }
+    return {
+      vincador: raw,
+      embalagem: String(fallbackType ?? '').trim() || 'N/A'
+    };
+  }
+
+  function build_database_record(result, id = 1, fabrica = '') {
+    const m = result.qdaMeta || {};
+    const { vincador, embalagem } = parse_tool_and_package(m.creasingTool, m.type || m.procedure);
+    const sensorFailures = (result.machineFailures || []).length;
+    const totalFailures = sensorFailures + (result.invalid || 0);
+    const faixa = [m.web, m.position].filter(Boolean).join(' / ') || 'N/A';
+    const papelBobina = [m.board, m.roll].filter(Boolean).join(' / ') || 'N/A';
+    const dataHora = [m.date, m.time].filter(Boolean).join(' ') || new Date().toLocaleString('pt-BR');
+    const plant = String(fabrica || result.fabrica || m.fabrica || 'N/A').trim() || 'N/A';
+
+    return {
+      id,
+      fabrica: plant,
+      pOrder: m.pOrder || result.fileName || 'N/A',
+      maquina: m.machine || 'N/A',
+      vincador,
+      embalagem,
+      faixa,
+      papelBobina,
+      dataHora,
+      data: m.date || '',
+      hora: m.time || '',
+      operador: m.operator || 'N/A',
+      falhas: totalFailures,
+      outliers: result.outliers || 0,
+      key: `${plant}|${m.pOrder || result.fileName || ''}|${m.date || ''}|${m.time || ''}|${m.creasingTool || ''}|${faixa}`
+    };
+  }
+
+  function make_database_csv(dbRecords, delimiter = ';') {
+    const rows = [
+      [
+        'ID',
+        'P-order',
+        'Máquina',
+        'Vincador',
+        'Embalagem',
+        'Faixa',
+        'Papel / Bobina',
+        'Data e Hora',
+        'Operador',
+        'Falhas',
+        'Outliers removidos',
+        'Fábrica'
+      ]
+    ];
+
+    for (const r of dbRecords) {
+      rows.push([
+        r.id,
+        r.pOrder,
+        r.maquina,
+        r.vincador,
+        r.embalagem,
+        r.faixa,
+        r.papelBobina,
+        r.dataHora,
+        r.operador,
+        r.falhas,
+        r.outliers,
+        r.fabrica || 'N/A'
+      ]);
+    }
+
+    return '\uFEFF' + rows.map(row => row.map(v => csv_escape(v, delimiter)).join(delimiter)).join('\r\n') + '\r\n';
+  }
+
+  function make_csv(result, audit = false, confirmed = false) {
+    const c = result.cfg;
+    if (!audit && result.selected < c.required && !(c.allowIncomplete && confirmed)) {
+      throw new Error('CSV incompleto bloqueado.');
+    }
+    if (!audit && !result.selected) {
+      throw new Error('Não há medições válidas para exportar.');
+    }
+
+    const rows = audit
+      ? [
+        [
+          'Seção selecionada',
+          'Total de seções',
+          'Número sequencial',
+          'Posição original',
+          'Valor original',
+          'Valor interpretado',
+          'Bending Force Crease',
+          'Bending Force Uncrease',
+          'Vincador',
+          'Máquina',
+          'Status',
+          'Motivo',
+          'Incluído no CSV'
+        ]
+      ]
+      : [['Medição', 'Posição original', 'Valor']];
+
+    const m = result.qdaMeta || {};
+    let n = 0;
+    for (const r of result.records) {
+      if (audit) {
+        rows.push([
+          result.selectedSection,
+          result.totalSections,
+          r.sequence,
+          r.position,
+          r.raw,
+          r.value === null ? '' : String(r.value).replace('.', c.decimal),
+          r.crease ?? '',
+          r.uncrease ?? '',
+          m.creasingTool || '',
+          m.machine || '',
+          r.status,
+          r.reason,
+          r.selected ? 'Sim' : 'Não'
+        ]);
+      } else if (r.selected) {
+        rows.push([++n, r.position, decimal_string(r.raw, r.value, c.decimals, c.decimal)]);
+      }
+    }
+
+    return '\uFEFF' + rows.map(row => row.map(v => csv_escape(v, c.delimiter)).join(c.delimiter)).join('\r\n') + '\r\n';
+  }
+
+  const api = {
+    VERSION,
+    FACTORIES,
+    ParseError,
+    defaults,
+    parse_numeric_value,
+    line_position,
+    find_all_prop_values_sections,
+    select_last_prop_values_section,
+    delimit_last_text_section,
+    extract_measurements_from_section,
+    find_csv_table_sections,
+    parse_file,
+    quantile,
+    stats,
+    validate_measurements,
+    make_csv,
+    make_qda_csv,
+    make_error_report_pdf,
+    parse_tool_and_package,
+    build_database_record,
+    make_database_csv
+  };
+
+  if (typeof module !== 'undefined' && module.exports) module.exports = api;
+  else root.RCS = api;
+})(typeof globalThis !== 'undefined' ? globalThis : this);
+
+</script>
+<script>
+(function () {
+  'use strict';
+
+  const $ = id => document.getElementById(id);
+  let files = [];
+  let batchItems = [];
+  let activeIndex = 0;
+  let loadedData = null;
+  let parsedData = null;
+  let result = null;
+  let page = 0;
+  let points = [];
+  let generation = 0;
+  const pageSize = 100;
+
+  const fmt = (v, maxDigits = 8) =>
+    v === null || v === undefined
+      ? 'Não disponível'
+      : Number(v).toLocaleString('pt-BR', { maximumFractionDigits: maxDigits });
+
+  if (/onedrive|sharepoint|dropbox/i.test(decodeURIComponent(location.href))) {
+    const warnEl = $('syncWarning');
+    if (warnEl) {
+      warnEl.hidden = false;
+      warnEl.textContent =
+        'Aviso de segurança: a aplicação está sendo executada a partir de uma pasta sincronizada em nuvem (ex.: OneDrive). Para confidencialidade total, mova a pasta para um diretório local não sincronizado (ex.: C:\\RCS_Local) e evite salvar resultados em pastas sincronizadas.';
+    }
+  }
+
+  function message(s) {
+    $('message').textContent = s;
+  }
+
+  function invalidate() {
+    result = null;
+    $('results').hidden = true;
+  }
+
+  function loadFiles(fileList) {
+    invalidate();
+    $('batchSection').hidden = true;
+    files = [];
+    batchItems = [];
+    activeIndex = 0;
+    loadedData = null;
+    parsedData = null;
+    $('process').disabled = true;
+
+    const arr = Array.from(fileList || []);
+    if (!arr.length) return;
+
+    const validFiles = [];
+    const errors = [];
+    for (const f of arr) {
+      if (f.size > 50 * 1024 * 1024) {
+        errors.push(f.name + ': Arquivo maior que 50 MB.');
+      } else if (!/\.(txt|al3|rcs|csv|dat|json|xml)$/i.test(f.name)) {
+        errors.push(f.name + ': Extensão não permitida. Use TXT, AL3, RCS, CSV, DAT, JSON ou XML.');
+      } else {
+        validFiles.push(f);
+      }
+    }
+
+    if (!validFiles.length) {
+      message(errors.join('\n'));
+      return;
+    }
+
+    files = validFiles;
+    const totalKB = validFiles.reduce((acc, f) => acc + f.size, 0) / 1024;
+    $('fileInfo').textContent =
+      validFiles.length === 1
+        ? validFiles[0].name +
+        ' · ' +
+        (validFiles[0].size / 1024).toLocaleString('pt-BR', { maximumFractionDigits: 1 }) +
+        ' KB'
+        : validFiles.length +
+        ' arquivos selecionados · Total: ' +
+        totalKB.toLocaleString('pt-BR', { maximumFractionDigits: 1 }) +
+        ' KB';
+    $('process').disabled = false;
+    processSelectedFiles();
+  }
+
+  function config() {
+    const required = Number($('required').value);
+    const multiplier = Number($('multiplier').value);
+    const max = $('maximum').value === '' ? null : Number($('maximum').value);
+    const section = $('sectionName').value.trim();
+
+    if (!section || !/^[A-Za-z0-9_ -]{1,64}$/.test(section)) {
+      throw Error('Nome de seção inválido. Use letras, números, espaço, hífen ou sublinhado.');
+    }
+    if (!Number.isInteger(required) || required < 1 || required > 10000) {
+      throw Error('Resultados necessários: informe um inteiro entre 1 e 10.000.');
+    }
+    if (!Number.isFinite(multiplier) || multiplier < 0.1 || multiplier > 10) {
+      throw Error('Multiplicador IQR: informe um valor entre 0,1 e 10.');
+    }
+    if (max !== null && (!Number.isFinite(max) || max < 0)) {
+      throw Error('Limite máximo deve ser um número não negativo.');
+    }
+
+    return {
+      section,
+      required,
+      multiplier,
+      max,
+      allowZero: $('zero').checked,
+      decimals: $('decimals').value === '' ? null : Number($('decimals').value),
+      delimiter: $('delimiter').value === 'tab' ? '\t' : $('delimiter').value,
+      decimal: $('decimal').value,
+      allowIncomplete: $('incomplete').checked
+    };
+  }
+
+  async function read_file_content(f) {
+    const buffer = await f.arrayBuffer();
+    const b = new Uint8Array(buffer);
+    if (b.includes(0) && !(b[0] === 255 && b[1] === 254) && !(b[0] === 254 && b[1] === 255)) {
+      throw Error('Conteúdo binário não suportado. Exporte o arquivo como texto.');
+    }
+    let encoding = 'utf-8';
+    let text;
+    if (b[0] === 255 && b[1] === 254) encoding = 'utf-16le';
+    else if (b[0] === 254 && b[1] === 255) encoding = 'utf-16be';
+
+    try {
+      text = new TextDecoder(encoding, { fatal: true }).decode(buffer);
+    } catch (e) {
+      encoding = 'windows-1252';
+      text = new TextDecoder(encoding).decode(buffer);
+    }
+    return { text: text.replace(/^\uFEFF/, ''), encoding };
+  }
+
+  function formatErrorMessage(e) {
+    const m = e.meta;
+    return (
+      (m?.totalSections
+        ? 'Foram encontradas ' +
+        m.totalSections +
+        ' seções. Última seção: ' +
+        m.selectedSection +
+        '. As anteriores não foram utilizadas.\n'
+        : '') + e.message
+    );
+  }
+
+  function selectBatchItem(idx) {
+    if (idx < 0 || idx >= batchItems.length) return;
+    activeIndex = idx;
+    const item = batchItems[idx];
+    loadedData = item.loaded;
+    parsedData = item.parsed;
+    result = item.result;
+    page = 0;
+    $('pan').value = 1;
+    $('filter').value = 'all';
+
+    renderBatchTable();
+    if (result) {
+      render();
+    } else {
+      invalidate();
+      if (item.error) message(item.error);
+    }
+  }
+
+  function applyConfigAndRender(reparseSection = false) {
+    if (!batchItems.length) return;
+    let cfg;
+    try {
+      cfg = config();
+    } catch (e) {
+      invalidate();
+      message(e.message);
+      return;
+    }
+
+    for (const item of batchItems) {
+      if (!item.loaded) continue;
+      try {
+        if (!item.parsed || reparseSection) {
+          item.parsed = RCS.parse_file(item.loaded.text, cfg);
+        }
+        const res = RCS.validate_measurements(item.parsed, cfg);
+        res.fileName = item.loaded.fileName;
+        res.fileSize = item.loaded.fileSize;
+        res.encoding = item.loaded.encoding;
+        res.processedAt = item.loaded.processedAt;
+        item.result = res;
+        item.error = null;
+      } catch (e) {
+        item.result = null;
+        item.error = formatErrorMessage(e);
+      }
+    }
+
+    const active = batchItems[activeIndex] || batchItems[0];
+    loadedData = active?.loaded || null;
+    parsedData = active?.parsed || null;
+    result = active?.result || null;
+
+    renderBatchTable();
+    if (result) {
+      render();
+    } else if (active?.error) {
+      invalidate();
+      message(active.error);
+    }
+  }
+
+  async function processSelectedFiles() {
+    if (!files.length) return;
+    const token = ++generation;
+    invalidate();
+    $('batchSection').hidden = true;
+    message('Processando ' + files.length + ' arquivo(s) localmente…');
+
+    let cfg;
+    try {
+      cfg = config();
+    } catch (e) {
+      message(e.message);
+      return;
+    }
+
+    const newBatch = [];
+    for (let i = 0; i < files.length; i++) {
+      const f = files[i];
+      const item = {
+        index: i,
+        file: f,
+        fileName: f.name,
+        fileSize: f.size,
+        loaded: null,
+        parsed: null,
+        result: null,
+        error: null,
+        downloaded: false,
+        listsState: 'pending',
+        listsMessage: 'Aguardando download'
+      };
+      try {
+        const loaded = await read_file_content(f);
+        if (token !== generation) return;
+        item.loaded = {
+          text: loaded.text,
+          encoding: loaded.encoding,
+          fileName: f.name,
+          fileSize: f.size,
+          processedAt: new Date().toISOString()
+        };
+        item.parsed = RCS.parse_file(item.loaded.text, cfg);
+        const res = RCS.validate_measurements(item.parsed, cfg);
+        res.fileName = item.loaded.fileName;
+        res.fileSize = item.loaded.fileSize;
+        res.encoding = item.loaded.encoding;
+        res.processedAt = item.loaded.processedAt;
+        item.result = res;
+
+        const runKey = RCS.build_database_record(res, 0, selectedFactory).key;
+        const alreadySent = dbRecords.some(x => x.key === runKey && x.sentToLists);
+        if (alreadySent) {
+          item.downloaded = true;
+          item.listsState = 'sent';
+          item.listsMessage = '✓ Já enviado ao Lists anteriormente';
+        }
+      } catch (e) {
+        if (token !== generation) return;
+        item.error = formatErrorMessage(e);
+      }
+      newBatch.push(item);
+    }
+
+    if (token !== generation) return;
+    batchItems = newBatch;
+    const firstValidIdx = batchItems.findIndex(x => x.result !== null);
+    activeIndex = firstValidIdx >= 0 ? firstValidIdx : 0;
+
+    $('process').disabled = !files.length;
+    selectBatchItem(activeIndex);
+  }
+
+  function renderBatchTable() {
+    const sec = $('batchSection');
+    const tbody = $('batchRows');
+    if (!sec || !tbody) return;
+
+    if (!batchItems.length) {
+      sec.hidden = true;
+      return;
+    }
+
+    // Always show the queue when >= 1 file is processed so individual actions and Lists status are clear
+    sec.hidden = false;
+    tbody.replaceChildren();
+
+    const okCount = batchItems.filter(x => x.result && x.result.selected >= x.result.cfg.required).length;
+    const doneCount = batchItems.filter(x => x.downloaded).length;
+    $('batchSummary').textContent =
+      batchItems.length +
+      ' arquivo(s) carregado(s) · ' +
+      okCount +
+      ' pronto(s) para download · ' +
+      doneCount +
+      ' já baixado(s) e enviado(s) ao Microsoft Lists. Clique em "Baixar CSV + Lists" em cada linha para baixar individualmente.';
+
+    batchItems.forEach((item, idx) => {
+      const tr = document.createElement('tr');
+      if (idx === activeIndex) {
+        tr.className = 'selected';
+      }
+
+      const r = item.result;
+      const m = r?.qdaMeta || {};
+      const pOrderFaixa = r
+        ? [m.pOrder || 'Sem P-order', [m.web, m.position].filter(Boolean).join(' / ')].filter(Boolean).join(' · ')
+        : '—';
+      const maqVinc = r
+        ? [m.machine || 'Máq. N/A', m.creasingTool || 'Vincador N/A'].join(' · ')
+        : '—';
+
+      let medInfo = '';
+      let medClass = '';
+      if (!r) {
+        medInfo = 'Erro: ' + (item.error || 'Falha na leitura');
+        medClass = 'bad';
+      } else {
+        const sensorFails = (r.machineFailures || []).length + r.invalid;
+        medInfo =
+          r.selected +
+          '/' +
+          r.cfg.required +
+          ' selecionados · ' +
+          sensorFails +
+          ' falha(s) · ' +
+          r.outliers +
+          ' outlier(s)';
+        medClass = r.selected >= r.cfg.required ? 'ok' : 'warn';
+      }
+
+      const statusClass =
+        item.listsState === 'sent'
+          ? 'ok'
+          : item.listsState === 'error'
+            ? 'bad'
+            : item.listsState === 'sending'
+              ? 'info'
+              : item.downloaded
+                ? 'info'
+                : 'muted';
+
+      [
+        idx + 1,
+        item.fileName,
+        pOrderFaixa,
+        maqVinc,
+        medInfo,
+        item.listsMessage
+      ].forEach((val, cIdx) => {
+        const td = document.createElement('td');
+        td.textContent = val;
+        if (cIdx === 4 && medClass) td.className = medClass;
+        if (cIdx === 5) td.className = statusClass;
+        tr.append(td);
+      });
+
+      const actionTd = document.createElement('td');
+      actionTd.style.maxWidth = 'none';
+      const btnWrap = document.createElement('div');
+      btnWrap.className = 'actions';
+      btnWrap.style.marginTop = '0';
+
+      const canDownload = Boolean(
+        r && r.selected > 0 && (r.selected >= r.cfg.required || r.cfg.allowIncomplete)
+      );
+
+      const dlBtn = document.createElement('button');
+      dlBtn.type = 'button';
+      if (idx === activeIndex) dlBtn.id = 'download';
+      dlBtn.style.padding = '7px 12px';
+      dlBtn.style.fontSize = '12.5px';
+      dlBtn.disabled = !canDownload;
+      dlBtn.textContent =
+        item.listsState === 'sent'
+          ? 'Baixar CSV (Já enviado ao Lists)'
+          : item.downloaded
+            ? 'Baixar CSV novamente'
+            : 'Baixar CSV + Lists';
+      dlBtn.addEventListener('click', e => {
+        e.stopPropagation();
+        downloadAndSyncItem(idx);
+      });
+      btnWrap.append(dlBtn);
+
+      if (r) {
+        const pdfBtn = document.createElement('button');
+        pdfBtn.type = 'button';
+        pdfBtn.className = 'accent';
+        pdfBtn.style.padding = '7px 12px';
+        pdfBtn.style.fontSize = '12.5px';
+        pdfBtn.textContent = 'PDF Falhas';
+        pdfBtn.addEventListener('click', e => {
+          e.stopPropagation();
+          downloadPdfForItem(idx);
+        });
+        btnWrap.append(pdfBtn);
+      }
+
+      const viewBtn = document.createElement('button');
+      viewBtn.type = 'button';
+      viewBtn.className = 'secondary';
+      viewBtn.style.padding = '7px 12px';
+      viewBtn.style.fontSize = '12.5px';
+      viewBtn.textContent = idx === activeIndex ? 'Em exibição' : 'Ver detalhes';
+      viewBtn.disabled = idx === activeIndex;
+      viewBtn.addEventListener('click', e => {
+        e.stopPropagation();
+        selectBatchItem(idx);
+      });
+      btnWrap.append(viewBtn);
+
+      actionTd.append(btnWrap);
+      tr.append(actionTd);
+      tbody.append(tr);
+    });
+  }
+
+  $('choose').addEventListener('click', () => $('file').click());
+  $('file').addEventListener('change', e => loadFiles(e.target.files));
+
+  ['dragenter', 'dragover'].forEach(t =>
+    $('drop').addEventListener(t, e => {
+      e.preventDefault();
+      $('drop').classList.add('over');
+    })
+  );
+
+  ['dragleave', 'drop'].forEach(t =>
+    $('drop').addEventListener(t, e => {
+      e.preventDefault();
+      $('drop').classList.remove('over');
+      if (t === 'drop') {
+        loadFiles(e.dataTransfer.files);
+      }
+    })
+  );
+
+  $('clear').addEventListener('click', () => {
+    generation++;
+    files = [];
+    batchItems = [];
+    activeIndex = 0;
+    loadedData = null;
+    parsedData = null;
+    invalidate();
+    $('batchSection').hidden = true;
+    $('file').value = '';
+    $('fileInfo').textContent =
+      'Nenhum arquivo selecionado. Você pode selecionar vários arquivos de uma vez (Limite: 50 MB por arquivo).';
+    $('process').disabled = true;
+    message('Dados em memória descartados. Pronto para carregar novos arquivos.');
+  });
+
+  $('process').addEventListener('click', processSelectedFiles);
+
+  const exportOnlyIds = new Set(['decimals', 'delimiter', 'decimal', 'incomplete']);
+  const ignoredConfigIds = new Set(['listsWebhookUrl']);
+  document.querySelectorAll('details input, details select').forEach(el =>
+    el.addEventListener('change', () => {
+      if (ignoredConfigIds.has(el.id)) return;
+      if (!batchItems.length) return;
+      if (exportOnlyIds.has(el.id)) {
+        try {
+          const newCfg = config();
+          for (const item of batchItems) {
+            if (item.result) item.result.cfg = newCfg;
+          }
+          renderBatchTable();
+          if (result) render();
+          message('Configuração de exportação atualizada.');
+        } catch (e) {
+          message(e.message);
+        }
+      } else {
+        applyConfigAndRender(el.id === 'sectionName');
+      }
+    })
+  );
+
+  function card(parent, label, value, cls = '') {
+    const d = document.createElement('div');
+    d.className = 'card ' + cls;
+    const l = document.createElement('span');
+    l.textContent = label;
+    const s = document.createElement('strong');
+    s.textContent = value;
+    d.append(l, s);
+    parent.append(d);
+  }
+
+  function metaItem(parent, label, value) {
+    const d = document.createElement('div');
+    d.className = 'meta-item';
+    const l = document.createElement('span');
+    l.textContent = label;
+    const s = document.createElement('strong');
+    s.textContent = value || 'N/A';
+    d.append(l, s);
+    parent.append(d);
+  }
+
+  function render() {
+    const r = result;
+    $('results').hidden = false;
+
+    const metaBox = $('metaCards');
+    metaBox.replaceChildren();
+    if (r.qdaMeta) {
+      const m = r.qdaMeta;
+      metaBox.hidden = false;
+      [
+        ['Fábrica (Planta)', selectedFactory || 'Não selecionada'],
+        ['P-order (Ordem)', m.pOrder],
+        ['Máquina (Equipamento)', m.machine || 'Não informado no CSV'],
+        ['Vincador (Creasing tool)', m.creasingTool],
+        ['Tipo / Procedimento', m.procedure || m.type],
+        ['Web / Posição', [m.web, m.position].filter(Boolean).join(' · ')],
+        ['Papel / Bobina (Corte)', [m.board, m.roll].filter(Boolean).join(' · ') || 'N/A'],
+        ['Data · Hora · Operador', [[m.date, m.time].filter(Boolean).join(' '), m.operator].filter(Boolean).join(' · ')]
+      ].forEach(([lbl, val]) => metaItem(metaBox, lbl, val));
+    } else {
+      metaBox.hidden = true;
+    }
+
+    const colLabel = r.detectedColumn
+      ? ' (coluna CSV: ' + r.detectedColumn + ')'
+      : r.qdaMeta?.rcsColumn
+        ? ' (' + r.qdaMeta.rcsColumn + ' pareada com Bending Force Crease e Uncrease)'
+        : '';
+
+    $('sectionInfo').textContent =
+      r.totalSections === 1
+        ? 'Foi encontrada uma seção ' + r.cfg.section + colLabel + '. Essa seção foi selecionada para processamento.'
+        : 'Foram encontradas ' +
+        r.totalSections +
+        ' seções ' +
+        r.cfg.section +
+        colLabel +
+        '. A seção ' +
+        r.selectedSection +
+        ' de ' +
+        r.totalSections +
+        ' foi selecionada por ser a última ocorrência do arquivo. As ' +
+        (r.totalSections - 1) +
+        ' seções anteriores foram ignoradas para o RCS (usadas apenas para parear os Bending Forces pelo sequencial).';
+
+    $('trace').textContent =
+      'Arquivo em exibição (' +
+      (activeIndex + 1) +
+      ' de ' +
+      batchItems.length +
+      '): ' +
+      r.fileName +
+      ' · Processado: ' +
+      new Date(r.processedAt).toLocaleString('pt-BR') +
+      ' · Linha ' +
+      r.sectionPosition.line +
+      ', coluna ' +
+      r.sectionPosition.column +
+      ', posição ' +
+      r.sectionPosition.offset +
+      ' (UTF-16, base zero) · ' +
+      r.records.length +
+      ' medições · ' +
+      r.encoding +
+      ' · Formato ' +
+      r.format;
+
+    $('preview').textContent =
+      'Primeiros valores: ' +
+      r.records
+        .slice(0, 10)
+        .map(x => x.raw || '(ausente)')
+        .join(' · ');
+
+    $('raw').textContent =
+      r.rawSection.slice(0, 20000) +
+      (r.rawSection.length > 20000 ? '\n[Prévia limitada a 20.000 caracteres]' : '');
+
+    const sensorFailures = (r.machineFailures || []).length;
+    $('cards').replaceChildren();
+    [
+      ['Seções encontradas', r.totalSections, 'info'],
+      ['Seção selecionada', r.selectedSection + ' de ' + r.totalSections, 'info'],
+      ['Falhas de força (-1)', sensorFailures, sensorFailures ? 'bad' : 'ok'],
+      ['Medições RCS extraídas', r.records.length, ''],
+      ['Inválidos no RCS', r.invalid, r.invalid ? 'bad' : ''],
+      ['Outliers removidos (IQR)', r.outliers, r.outliers ? 'warn' : 'ok'],
+      ['Válidos após filtragem', r.valid, 'ok'],
+      ['Selecionados para CSV', r.selected, 'ok'],
+      [
+        'Situação',
+        r.selected >= r.cfg.required && !r.alerts.length ? 'Aprovado' : 'Atenção necessária',
+        r.selected >= r.cfg.required && !r.alerts.length ? 'ok' : 'warn'
+      ]
+    ].forEach(a => card($('cards'), ...a));
+
+    $('warnings').textContent = r.alerts.join(' ');
+    $('stats').replaceChildren();
+    [
+      ['Q1', r.q1],
+      ['Mediana', r.median],
+      ['Q3', r.q3],
+      ['IQR', r.iqr],
+      ['Limite inferior', r.lower],
+      ['Limite superior', r.upper],
+      ['Média antes', r.before.mean],
+      ['Média depois', r.after.mean],
+      ['Desvio padrão antes', r.before.sd],
+      ['Desvio padrão depois', r.after.sd]
+    ].forEach(a => card($('stats'), a[0], fmt(a[1])));
+
+    message(
+      r.records.length
+        ? batchItems.length > 1
+          ? 'Processamento de ' +
+          batchItems.length +
+          ' arquivos concluído. Baixe cada arquivo individualmente na fila acima (o envio ao Lists ocorre apenas no 1º download de cada corrida).'
+          : 'Processamento concluído. Utilize os botões da fila ao lado para baixar o CSV padrão QDA e o PDF de falhas.'
+        : 'Última seção vazia. CSV principal bloqueado.'
+    );
+
+    const anomalyCount = (r.anomalies || []).length;
+    if ($('tabBadgeAnomalies')) {
+      $('tabBadgeAnomalies').textContent = anomalyCount + (anomalyCount === 1 ? ' falha' : ' falhas');
+    }
+    if ($('tabBadgeRecords')) {
+      $('tabBadgeRecords').textContent = r.selected + ' / ' + r.records.length;
+    }
+
+    renderTable();
+    renderAnomalies();
+    draw();
+  }
+
+  function filtered() {
+    return result.records.filter(r => {
+      switch ($('filter').value) {
+        case 'valid':
+          return r.status === 'Válido';
+        case 'invalid':
+          return r.status !== 'Válido' && !r.status.startsWith('Outlier');
+        case 'outliers':
+          return r.status.startsWith('Outlier');
+        case 'selected':
+          return r.selected;
+        default:
+          return true;
+      }
+    });
+  }
+
+  function renderTable() {
+    if (!result) return;
+    let sampleCounter = 0;
+    const sampleNumberMap = new Map();
+    for (const r of result.records) {
+      if (r.selected) {
+        sampleNumberMap.set(r.position, ++sampleCounter);
+      }
+    }
+
+    const all = filtered();
+    const pages = Math.max(1, Math.ceil(all.length / pageSize));
+    page = Math.min(page, pages - 1);
+    $('rows').replaceChildren();
+
+    all.slice(page * pageSize, (page + 1) * pageSize).forEach(r => {
+      const tr = document.createElement('tr');
+      if (r.selected) tr.className = 'selected';
+      const csvSampleNum = sampleNumberMap.get(r.position) ?? '—';
+      [
+        csvSampleNum,
+        r.sequence,
+        r.position,
+        r.raw || '(ausente)',
+        fmt(r.value),
+        r.crease || '—',
+        r.uncrease || '—',
+        r.status,
+        r.reason || (r.selected ? 'Mantido e selecionado' : 'Mantido, além dos primeiros ' + result.cfg.required),
+        r.selected ? 'Sim' : 'Não'
+      ].forEach((v, i) => {
+        const td = document.createElement('td');
+        td.textContent = v;
+        if (i === 7) {
+          td.className = r.status.startsWith('Outlier') ? 'warn' : r.status === 'Válido' ? 'ok' : 'bad';
+        }
+        tr.append(td);
+      });
+      $('rows').append(tr);
+    });
+
+    $('pageInfo').textContent = 'Página ' + (page + 1) + ' de ' + pages + ' · ' + all.length + ' registros';
+    $('prev').disabled = page === 0;
+    $('next').disabled = page === pages - 1;
+  }
+
+  function renderAnomalies() {
+    if (!result) return;
+    const r = result;
+    const m = r.qdaMeta || {};
+    const anomalies = r.anomalies || [];
+    const totalCycles = r.records.length + (r.machineFailures ? r.machineFailures.length : 0);
+    const tbody = $('anomalyRows');
+    tbody.replaceChildren();
+
+    if (!anomalies.length) {
+      $('anomalySummary').textContent =
+        'Nenhuma falha encontrada nas ' +
+        totalCycles +
+        ' amostras lidas' +
+        (m.creasingTool ? ' (Vincador: ' + m.creasingTool + ' | Máquina: ' + (m.machine || 'N/A') + ')' : '') +
+        '.';
+      const tr = document.createElement('tr');
+      const td = document.createElement('td');
+      td.colSpan = 5;
+      td.className = 'ok';
+      td.textContent = 'Todas as amostras desta corrida foram aprovadas sem erros.';
+      tr.append(td);
+      tbody.append(tr);
+      return;
+    }
+
+    $('anomalySummary').textContent =
+      'Vincador: ' +
+      (m.creasingTool || 'Não informado') +
+      ' · Máquina: ' +
+      (m.machine || 'Não informada') +
+      ' · Ordem: ' +
+      (m.pOrder || 'N/A') +
+      ' · ' +
+      anomalies.length +
+      ' amostra(s) com problema de ' +
+      totalCycles +
+      ' lidas (Faixa normal esperada de RCS: ' +
+      fmt(r.lower, 1) +
+      ' até ' +
+      fmt(r.upper, 1) +
+      ').';
+
+    anomalies.forEach(a => {
+      const tr = document.createElement('tr');
+      let rcsDisplay = 'Sem leitura (-1)';
+      if (a.value !== null && a.value !== undefined) {
+        if (a.status === 'Outlier superior') {
+          rcsDisplay = fmt(a.value, 1) + ' (máx esperado: ' + fmt(r.upper, 1) + ')';
+        } else if (a.status === 'Outlier inferior') {
+          rcsDisplay = fmt(a.value, 1) + ' (mín esperado: ' + fmt(r.lower, 1) + ')';
+        } else {
+          rcsDisplay = fmt(a.value, 1);
+        }
+      }
+      const forcesDisplay = a.crease || a.uncrease ? (a.crease || '-') + ' / ' + (a.uncrease || '-') : '—';
+
+      [
+        'Nº ' + (a.sequence ?? '—'),
+        a.friendlyStatus || a.status,
+        rcsDisplay,
+        forcesDisplay,
+        a.diagnosis
+      ].forEach((v, i) => {
+        const td = document.createElement('td');
+        td.textContent = v;
+        if (i === 1) {
+          td.className = String(a.status).startsWith('Outlier') ? 'warn' : 'bad';
+        }
+        tr.append(td);
+      });
+      tbody.append(tr);
+    });
+  }
+
+  $('filter').addEventListener('change', () => {
+    page = 0;
+    renderTable();
+  });
+  $('prev').addEventListener('click', () => {
+    page--;
+    renderTable();
+  });
+  $('next').addEventListener('click', () => {
+    page++;
+    renderTable();
+  });
+
+  function canvas(id) {
+    const el = $(id);
+    const rect = el.getBoundingClientRect();
+    const dpr = window.devicePixelRatio || 1;
+    el.width = Math.max(1, Math.round(rect.width * dpr));
+    el.height = Math.max(1, Math.round(rect.height * dpr));
+    const c = el.getContext('2d');
+    c.scale(dpr, dpr);
+    const css = getComputedStyle(document.documentElement);
+    c.font = '12px system-ui';
+    c.fillStyle = css.getPropertyValue('--ink');
+    return {
+      c,
+      w: rect.width,
+      h: rect.height,
+      ink: css.getPropertyValue('--ink'),
+      blue: css.getPropertyValue('--blue'),
+      green: css.getPropertyValue('--green'),
+      red: css.getPropertyValue('--red'),
+      orange: css.getPropertyValue('--orange'),
+      border: css.getPropertyValue('--border')
+    };
+  }
+
+  function bounds(vals) {
+    if (!vals.length) return [0, 1];
+    let min = Infinity;
+    let max = -Infinity;
+    for (const v of vals) {
+      min = Math.min(min, v);
+      max = Math.max(max, v);
+    }
+    const span = max - min || Math.max(Math.abs(max) * 0.1, 1);
+    return [min - span * 0.1, max + span * 0.1];
+  }
+
+  function draw() {
+    if (!result) return;
+    drawSeries();
+    drawBox();
+    drawCompare();
+  }
+
+  function drawSeries() {
+    const r = result;
+    const a = canvas('series');
+    const { c, w, h } = a;
+    points = [];
+
+    if (!r.records.length) {
+      $('pan').max = 1;
+      $('pan').value = 1;
+      $('pan').disabled = true;
+      c.fillText('Nenhuma medição para exibir no gráfico.', 20, 50);
+      return;
+    }
+
+    const count = $('zoom').value === 'all' ? Math.min(2000, r.records.length) : Number($('zoom').value);
+    const maxStart = Math.max(1, r.records.length - count + 1);
+    $('pan').max = maxStart;
+    $('pan').disabled = maxStart <= 1;
+    const start = Math.min(Number($('pan').value), maxStart);
+    $('pan').value = start;
+
+    const visible = r.records.slice(start - 1, start - 1 + count);
+    const scaleCandidates = visible
+      .filter(x => x.status === 'Válido' || x.status.startsWith('Outlier'))
+      .map(x => x.value);
+    const fallbackCandidates = visible.filter(x => x.value !== null).map(x => x.value);
+    const [lo, hi] = bounds(scaleCandidates.length ? scaleCandidates : fallbackCandidates);
+
+    const left = 64;
+    const right = Math.max(left + 1, w - 22);
+    const top = 24;
+    const bottom = h - 65;
+    const x = i => left + (i / Math.max(1, visible.length - 1)) * (right - left);
+    const y = v => {
+      const clamped = Math.max(lo, Math.min(hi, v));
+      return bottom - ((clamped - lo) / (hi - lo)) * (bottom - top);
+    };
+
+    c.strokeStyle = a.border;
+    c.beginPath();
+    c.moveTo(left, top);
+    c.lineTo(left, bottom);
+    c.lineTo(right, bottom);
+    c.stroke();
+
+    c.fillStyle = a.ink;
+    for (let i = 0; i < 5; i++) {
+      const v = lo + ((hi - lo) * i) / 4;
+      c.fillText(fmt(v, 4), 2, y(v) + 4);
+    }
+    c.fillText('Valor medido', left, 14);
+    c.fillText(
+      'Posição original: ' + start + ' a ' + (start + visible.length - 1) + ' / ' + r.records.length,
+      left,
+      h - 8
+    );
+
+    visible.forEach((v, i) => {
+      const px = x(i);
+      const out = v.status.startsWith('Outlier');
+      const invalid = v.status !== 'Válido' && !out;
+      const py = v.value === null || invalid ? h - 42 : y(v.value);
+
+      c.fillStyle = c.strokeStyle = invalid ? a.red : out ? a.orange : v.selected ? a.green : a.blue;
+      c.beginPath();
+      if (invalid) {
+        c.moveTo(px - 4, py - 4);
+        c.lineTo(px + 4, py + 4);
+        c.moveTo(px - 4, py + 4);
+        c.lineTo(px + 4, py - 4);
+        c.stroke();
+      } else if (out) {
+        c.moveTo(px, py - 5);
+        c.lineTo(px + 5, py + 4);
+        c.lineTo(px - 5, py + 4);
+        c.closePath();
+        c.fill();
+      } else {
+        c.arc(px, py, v.selected ? 4 : 3, 0, Math.PI * 2);
+        c.fill();
+      }
+      points.push({ x: px, y: py, r: v });
+    });
+  }
+
+  function drawBox() {
+    const r = result;
+    const a = canvas('box');
+    const { c, w, h } = a;
+    if (r.q1 === null) {
+      c.fillText('Sem dados válidos para boxplot.', 20, 50);
+      return;
+    }
+
+    const vals = r.records
+      .filter(x => x.status === 'Válido' || x.status.startsWith('Outlier'))
+      .map(x => x.value);
+    const [lo, hi] = bounds([...vals, r.lower, r.upper]);
+    const left = 45;
+    const right = Math.max(46, w - 30);
+    const y = h * 0.36;
+    const x = v => left + ((v - lo) / (hi - lo)) * (right - left);
+
+    c.strokeStyle = a.blue;
+    c.lineWidth = 2;
+    c.beginPath();
+    c.moveTo(x(r.lower), y);
+    c.lineTo(x(r.upper), y);
+    c.stroke();
+
+    for (const v of [r.lower, r.upper]) {
+      c.beginPath();
+      c.moveTo(x(v), y - 14);
+      c.lineTo(x(v), y + 14);
+      c.stroke();
+    }
+
+    c.fillStyle = a.blue;
+    c.globalAlpha = 0.15;
+    c.fillRect(x(r.q1), y - 22, Math.max(1, x(r.q3) - x(r.q1)), 44);
+    c.globalAlpha = 1;
+    c.strokeRect(x(r.q1), y - 22, Math.max(1, x(r.q3) - x(r.q1)), 44);
+
+    c.beginPath();
+    c.moveTo(x(r.median), y - 22);
+    c.lineTo(x(r.median), y + 22);
+    c.stroke();
+
+    r.records
+      .filter(v => v.status.startsWith('Outlier'))
+      .forEach(v => {
+        c.fillStyle = a.orange;
+        c.beginPath();
+        c.arc(x(v.value), y, 4, 0, Math.PI * 2);
+        c.fill();
+      });
+
+    c.fillStyle = a.ink;
+    c.fillText('Q1 ' + fmt(r.q1) + ' | Mediana ' + fmt(r.median) + ' | Q3 ' + fmt(r.q3), 15, h - 28);
+    c.fillText('Limites IQR: ' + fmt(r.lower) + ' a ' + fmt(r.upper), 15, h - 10);
+    $('boxInfo').textContent =
+      'Bigodes representam os limites teóricos do IQR, não os extremos observados. ' +
+      (r.iqrApplied
+        ? 'Exclusão estatística aplicada.'
+        : 'Exclusão estatística não aplicada (regra conservadora).');
+  }
+
+  function drawCompare() {
+    const r = result;
+    const a = canvas('comparison');
+    const { c, w, h } = a;
+    const metrics = [
+      ['Média', 'mean'],
+      ['Mediana', 'median'],
+      ['Desvio padrão', 'sd']
+    ];
+    const usable = Math.max(1, w - 240);
+
+    metrics.forEach((m, i) => {
+      const y = 14 + i * 44;
+      const bVal = r.before[m[1]] ?? 0;
+      const aVal = r.after[m[1]] ?? 0;
+      const rowMax = Math.max(1e-9, bVal, aVal);
+
+      c.fillStyle = a.ink;
+      c.fillText(m[0], 5, y + 12);
+
+      const bWidth = bVal > 0 ? Math.max(2, (usable * bVal) / rowMax) : 0;
+      const aWidth = aVal > 0 ? Math.max(2, (usable * aVal) / rowMax) : 0;
+
+      c.fillStyle = a.blue;
+      c.fillRect(120, y, bWidth, 12);
+      c.fillStyle = a.green;
+      c.fillRect(120, y + 16, aWidth, 12);
+
+      c.fillStyle = a.ink;
+      c.fillText(fmt(r.before[m[1]], 4), 126 + bWidth, y + 10);
+      c.fillText(fmt(r.after[m[1]], 4), 126 + aWidth, y + 26);
+    });
+
+    c.fillStyle = a.ink;
+    c.fillText('Barra superior: antes do IQR · Barra inferior (verde): depois do IQR', 10, h - 10);
+    $('compareInfo').textContent = metrics
+      .map(m => m[0] + ': ' + fmt(r.before[m[1]]) + ' → ' + fmt(r.after[m[1]]))
+      .join(' · ');
+  }
+
+  document.querySelectorAll('.tab-btn[data-tab-target]').forEach(btn => {
+    btn.addEventListener('click', () => {
+      const target = btn.getAttribute('data-tab-target');
+      const resEl = $('results');
+      if (resEl && target) {
+        resEl.setAttribute('data-active-tab', target);
+      }
+      document.querySelectorAll('.tab-btn[data-tab-target]').forEach(b => {
+        const isCurrent = b === btn;
+        b.classList.toggle('active', isCurrent);
+        b.setAttribute('aria-selected', isCurrent ? 'true' : 'false');
+      });
+      draw();
+    });
+  });
+
+  $('series').addEventListener('pointermove', inspect);
+  $('series').addEventListener('click', inspect);
+
+  function inspect(e) {
+    if (!points.length) return;
+    const rect = $('series').getBoundingClientRect();
+    const x = e.clientX - rect.left;
+    const y = e.clientY - rect.top;
+    let p = points[0];
+    let dist = Infinity;
+    for (const q of points) {
+      const d = (q.x - x) ** 2 + (q.y - y) ** 2;
+      if (d < dist) {
+        dist = d;
+        p = q;
+      }
+    }
+    $('hover').textContent =
+      'Posição ' +
+      p.r.position +
+      ' · Sequencial ' +
+      p.r.sequence +
+      ' · RCS ' +
+      (p.r.raw || '(ausente)') +
+      (p.r.crease ? ' · Crease ' + p.r.crease + ' · Uncrease ' + p.r.uncrease : '') +
+      ' · ' +
+      p.r.status +
+      ' · CSV: ' +
+      (p.r.selected ? 'Sim' : 'Não');
+  }
+
+  $('zoom').addEventListener('change', drawSeries);
+  $('pan').addEventListener('input', drawSeries);
+  window.addEventListener('resize', draw);
+  window.matchMedia('(prefers-color-scheme: dark)').addEventListener('change', draw);
+
+  function stamp() {
+    const d = new Date();
+    const p = n => String(n).padStart(2, '0');
+    return (
+      d.getFullYear() +
+      '-' +
+      p(d.getMonth() + 1) +
+      '-' +
+      p(d.getDate()) +
+      '_' +
+      p(d.getHours()) +
+      '-' +
+      p(d.getMinutes()) +
+      '-' +
+      p(d.getSeconds())
+    );
+  }
+
+  function safeFilename(s) {
+    return String(s || '')
+      .replace(/[<>:"/\\|?*\x00-\x1F]/g, '_')
+      .trim();
+  }
+
+  function download(content, name, type) {
+    const url = URL.createObjectURL(new Blob([content], { type }));
+    const a = document.createElement('a');
+    a.href = url;
+    a.download = name;
+    a.click();
+    setTimeout(() => URL.revokeObjectURL(url), 1000);
+  }
+
+  // URL fixa do Power Automate integrada para envio automático ao Microsoft Lists em qualquer PC:
+  const DEFAULT_LISTS_WEBHOOK_URL =
+    'https://defaultd2d2794a61cc482396908e288fd554.cc.environment.api.powerplatform.com:443/powerautomate/automations/direct/cu/08/workflows/356fadf689774512b28604c5178ebbee/triggers/manual/paths/invoke?api-version=1&sp=%2Ftriggers%2Fmanual%2Frun&sv=1.0&sig=OwWaot7YGbcayxh1jTEYIuIAzMEo9zeHO2wu8dgHhNQ';
+  const DB_STORAGE_KEY = 'rcs_local_powerbi_db_v1';
+  const WEBHOOK_STORAGE_KEY = 'rcs_local_lists_webhook_v1';
+  const FACTORY_STORAGE_KEY = 'rcs_local_selected_factory_v1';
+  let dbRecords = [];
+  let selectedFactory = '';
+
+  function initFactoryGate() {
+    const gate = $('factoryGate');
+    const select = $('factoryGateSelect');
+    const confirmBtn = $('factoryGateConfirm');
+    const badge = $('activeFactoryBadge');
+    const changeBtn = $('changeFactoryBtn');
+    if (!gate || !select || !confirmBtn) return;
+
+    let savedFactory = '';
+    try {
+      savedFactory = localStorage.getItem(FACTORY_STORAGE_KEY) || '';
+    } catch (_) {}
+
+    if (savedFactory && [...select.options].some(o => o.value === savedFactory)) {
+      select.value = savedFactory;
+      confirmBtn.disabled = false;
+    } else {
+      select.value = '';
+      confirmBtn.disabled = true;
+    }
+
+    select.addEventListener('change', () => {
+      confirmBtn.disabled = !select.value;
+    });
+
+    const applyFactoryChoice = () => {
+      const chosen = select.value.trim();
+      if (!chosen) return;
+      selectedFactory = chosen;
+      try {
+        localStorage.setItem(FACTORY_STORAGE_KEY, chosen);
+      } catch (_) {}
+      if (badge) badge.textContent = chosen;
+      gate.hidden = true;
+      updateDbStatusUI();
+      if (batchItems.length) {
+        for (const item of batchItems) {
+          if (item.result) {
+            const runKey = RCS.build_database_record(item.result, 0, selectedFactory).key;
+            const alreadySent = dbRecords.some(x => x.key === runKey && x.sentToLists);
+            if (alreadySent) {
+              item.downloaded = true;
+              item.listsState = 'sent';
+              item.listsMessage = '✓ Já enviado ao Lists anteriormente';
+            }
+          }
+        }
+        renderBatchTable();
+        if (result) render();
+      } else {
+        message('Fábrica ativa selecionada: ' + chosen + '. Pronto para carregar arquivos.');
+      }
+    };
+
+    confirmBtn.addEventListener('click', applyFactoryChoice);
+    select.addEventListener('keydown', e => {
+      if (e.key === 'Enter' && select.value) {
+        e.preventDefault();
+        applyFactoryChoice();
+      }
+    });
+
+    if (changeBtn) {
+      changeBtn.addEventListener('click', () => {
+        if (selectedFactory) {
+          select.value = selectedFactory;
+          confirmBtn.disabled = false;
+        }
+        gate.hidden = false;
+        select.focus();
+      });
+    }
+
+    if (navigator.webdriver) {
+      selectedFactory = savedFactory || 'MonteMor';
+      select.value = selectedFactory;
+      if (badge) badge.textContent = selectedFactory;
+      gate.hidden = true;
+    }
+  }
+
+  function getWebhookUrl() {
+    const inputVal = ($('listsWebhookUrl')?.value || '').trim();
+    return inputVal || DEFAULT_LISTS_WEBHOOK_URL;
+  }
+
+  function loadLocalDb() {
+    try {
+      const raw = localStorage.getItem(DB_STORAGE_KEY);
+      dbRecords = raw ? JSON.parse(raw) : [];
+      if (!Array.isArray(dbRecords)) dbRecords = [];
+    } catch (_) {
+      dbRecords = [];
+    }
+    try {
+      const savedUrl = localStorage.getItem(WEBHOOK_STORAGE_KEY) || DEFAULT_LISTS_WEBHOOK_URL;
+      if ($('listsWebhookUrl')) $('listsWebhookUrl').value = savedUrl;
+    } catch (_) { }
+    updateDbStatusUI();
+  }
+
+  function saveLocalDb() {
+    try {
+      localStorage.setItem(DB_STORAGE_KEY, JSON.stringify(dbRecords));
+    } catch (_) { }
+  }
+
+  function setDbStatus(msg, cls = 'muted') {
+    const el = $('dbStatus');
+    if (!el) return;
+    el.className = cls;
+    el.textContent = msg;
+  }
+
+  function updateDbStatusUI() {
+    if ($('downloadDb')) $('downloadDb').disabled = dbRecords.length === 0;
+    const url = getWebhookUrl();
+    setDbStatus(
+      `Fábrica: ${selectedFactory || 'Aguardando seleção'} · Histórico local: ${dbRecords.length} corrida(s) · Microsoft Lists: ${url ? 'Conectado (envio automático no 1º download)' : 'Aguardando URL do Power Automate'
+      }.`,
+      url ? 'ok' : 'muted'
+    );
+  }
+
+  async function sendToMicrosoftLists(entry, forceInAutomation = false) {
+    if (navigator.webdriver && !forceInAutomation) {
+      return { sent: false, reason: 'webdriver_test' };
+    }
+    const url = getWebhookUrl();
+    if (!url) return { sent: false, reason: 'no_url' };
+    try {
+      const payload = {
+        ID: entry.id,
+        Fabrica: entry.fabrica || selectedFactory || 'N/A',
+        POrder: entry.pOrder,
+        Maquina: entry.maquina,
+        Vincador: entry.vincador,
+        Embalagem: entry.embalagem,
+        Faixa: entry.faixa,
+        PapelBobina: entry.papelBobina,
+        DataHora: entry.dataHora,
+        Data: entry.data,
+        Hora: entry.hora,
+        Operador: entry.operador,
+        Falhas: entry.falhas,
+        OutliersRemovidos: entry.outliers
+      };
+      const resp = await fetch(url, {
+        method: 'POST',
+        headers: { 'Content-Type': 'application/json' },
+        body: JSON.stringify(payload)
+      });
+      return { sent: resp.ok, status: resp.status };
+    } catch (err) {
+      return { sent: false, error: err.message };
+    }
+  }
+
+  async function recordToDatabase(res, batchItem = null) {
+    const candidateKey = RCS.build_database_record(res, 0, selectedFactory).key;
+    const existingIdx = dbRecords.findIndex(x => x.key && x.key === candidateKey);
+    const alreadySentToLists =
+      (existingIdx >= 0 && Boolean(dbRecords[existingIdx].sentToLists)) ||
+      (batchItem && batchItem.listsState === 'sent');
+
+    let entry;
+    if (existingIdx >= 0) {
+      entry = {
+        ...RCS.build_database_record(res, dbRecords[existingIdx].id, selectedFactory),
+        sentToLists: Boolean(dbRecords[existingIdx].sentToLists)
+      };
+      dbRecords[existingIdx] = entry;
+    } else {
+      const nextId = dbRecords.length ? Math.max(...dbRecords.map(x => Number(x.id) || 0)) + 1 : 1;
+      entry = {
+        ...RCS.build_database_record(res, nextId, selectedFactory),
+        sentToLists: false
+      };
+      dbRecords.push(entry);
+    }
+
+    saveLocalDb();
+    updateDbStatusUI();
+
+    // Trava contra duplicidade no Microsoft Lists: se já foi enviado na 1ª vez, não envia de novo
+    if (alreadySentToLists) {
+      if (batchItem) {
+        batchItem.downloaded = true;
+        batchItem.listsState = 'sent';
+        batchItem.listsMessage = '✓ CSV baixado novamente (já enviado ao Lists — envio duplicado bloqueado)';
+        renderBatchTable();
+      }
+      message(
+        'CSV baixado novamente (' +
+        entry.pOrder +
+        ' · ' +
+        entry.fabrica +
+        '). Como esta corrida já foi enviada ao Microsoft Lists no primeiro download, o reenvio foi bloqueado para evitar duplicidade.'
+      );
+      return;
+    }
+
+    if (batchItem) {
+      batchItem.downloaded = true;
+      batchItem.listsState = 'sending';
+      batchItem.listsMessage = 'CSV baixado · Enviando ao Lists (' + entry.fabrica + ')…';
+      renderBatchTable();
+    }
+
+    const listsRes = await sendToMicrosoftLists(entry);
+    if (listsRes.sent) {
+      entry.sentToLists = true;
+      saveLocalDb();
+      updateDbStatusUI();
+      if (batchItem) {
+        batchItem.listsState = 'sent';
+        batchItem.listsMessage = '✓ CSV baixado e enviado ao Lists (' + entry.fabrica + ')';
+        renderBatchTable();
+      }
+      message(
+        '✓ CSV baixado e dados da corrida (' +
+        entry.fabrica +
+        ' · ' +
+        entry.pOrder +
+        ' · ' +
+        entry.vincador +
+        ') enviados automaticamente para o Microsoft Lists!'
+      );
+    } else if (listsRes.reason === 'no_url' || listsRes.reason === 'webdriver_test') {
+      if (batchItem) {
+        batchItem.listsState = 'local';
+        batchItem.listsMessage = '✓ CSV baixado (salvo na base local)';
+        renderBatchTable();
+      }
+    } else {
+      if (batchItem) {
+        batchItem.listsState = 'error';
+        batchItem.listsMessage = 'CSV baixado · Falha no envio ao Lists (clique para tentar reenviar)';
+        renderBatchTable();
+      }
+    }
+  }
+
+  function downloadAndSyncItem(idx) {
+    if (!selectedFactory && !navigator.webdriver) {
+      if ($('factoryGate')) $('factoryGate').hidden = false;
+      message('Selecione a Fábrica (Planta) antes de baixar e enviar os dados para o Microsoft Lists.');
+      return;
+    }
+    const item = batchItems[idx];
+    const r = item?.result;
+    if (!r) return;
+    try {
+      let confirmed = false;
+      if (r.selected < r.cfg.required) {
+        confirmed = confirm(
+          'ATENÇÃO (' +
+          item.fileName +
+          '): exportar apenas ' +
+          r.selected +
+          ' de ' +
+          r.cfg.required +
+          ' medições? O arquivo será identificado como INCOMPLETO.'
+        );
+        if (!confirmed) return;
+      }
+
+      if (r.qdaMeta) {
+        const m = r.qdaMeta;
+        const rcsCol = m.rcsColumn || r.detectedColumn || 'RCS CD Board';
+        const baseName = m.pOrder
+          ? safeFilename(rcsCol + ' ' + m.pOrder + (m.web || ''))
+          : 'resultado_RCS_' + safeFilename(item.fileName.replace(/\.[^.]+$/, '')) + '_' + stamp();
+        const fileName = (confirmed ? 'INCOMPLETO_' : '') + baseName + '.csv';
+        download(RCS.make_qda_csv(r, confirmed), fileName, 'text/csv;charset=utf-8');
+      } else {
+        download(
+          RCS.make_csv(r, false, confirmed),
+          'resultado_RCS_' + (confirmed ? 'INCOMPLETO_' : '') + stamp() + '.csv',
+          'text/csv;charset=utf-8'
+        );
+      }
+
+      recordToDatabase(r, item);
+    } catch (e) {
+      message(e.message);
+    }
+  }
+
+  function downloadPdfForItem(idx) {
+    const item = batchItems[idx];
+    const r = item?.result;
+    if (!r) return;
+    const m = r.qdaMeta || {};
+    const suffix = m.pOrder
+      ? safeFilename(m.pOrder) + '_' + stamp()
+      : safeFilename(item.fileName.replace(/\.[^.]+$/, '')) + '_' + stamp();
+    download(
+      RCS.make_error_report_pdf(r),
+      'relatorio_falhas_vincador_maquina_' + suffix + '.pdf',
+      'application/pdf'
+    );
+  }
+
+  if ($('downloadDb')) {
+    $('downloadDb').addEventListener('click', () => {
+      if (!dbRecords.length) return;
+      download(
+        RCS.make_database_csv(dbRecords),
+        'Base_Historico_RCS_PowerBI.csv',
+        'text/csv;charset=utf-8'
+      );
+    });
+  }
+
+  if ($('saveWebhook')) {
+    $('saveWebhook').addEventListener('click', () => {
+      const url = ($('listsWebhookUrl')?.value || '').trim();
+      try {
+        localStorage.setItem(WEBHOOK_STORAGE_KEY, url);
+      } catch (_) { }
+      updateDbStatusUI();
+      setDbStatus(
+        url
+          ? 'URL do Microsoft Lists salva! Agora todo clique no botão de download enviará os dados automaticamente.'
+          : 'URL do Microsoft Lists removida.',
+        'ok'
+      );
+    });
+  }
+
+  if ($('testWebhook')) {
+    $('testWebhook').addEventListener('click', async () => {
+      const url = getWebhookUrl();
+      if (!url) {
+        setDbStatus('Cole primeiro a URL do fluxo HTTP do Power Automate no campo acima.', 'warn');
+        return;
+      }
+      const sampleEntry = dbRecords.length
+        ? { ...dbRecords[dbRecords.length - 1], fabrica: selectedFactory || dbRecords[dbRecords.length - 1].fabrica || 'MonteMor' }
+        : result
+          ? RCS.build_database_record(result, 1, selectedFactory || 'MonteMor')
+          : {
+            id: 1,
+            fabrica: selectedFactory || 'MonteMor',
+            pOrder: '937186 P CD 1',
+            maquina: 'VTV17',
+            vincador: 'Vincador48',
+            embalagem: '200Slim',
+            faixa: 'Web 1 / 1.First',
+            papelBobina: 'Klabin CLC/C PM9 / 096L100332',
+            dataHora: '16/11/2026 10:47:00',
+            data: '16/11/2026',
+            hora: '10:47:00',
+            operador: 'SERVICE',
+            falhas: 4,
+            outliers: 0
+          };
+      setDbStatus('Enviando registro de teste (' + sampleEntry.fabrica + ') para o Microsoft Lists…', 'info');
+      const res = await sendToMicrosoftLists(sampleEntry, true);
+      if (res.sent) {
+        setDbStatus('✓ Sucesso! O registro de teste (' + sampleEntry.fabrica + ') foi recebido pelo Power Automate e criado no Microsoft Lists.', 'ok');
+      } else {
+        setDbStatus('Falha ao enviar para o Power Automate. Verifique se a URL foi copiada por completo e se o fluxo está ativado.', 'bad');
+      }
+    });
+  }
+
+  initFactoryGate();
+  loadLocalDb();
+})();
+
+</script>
+</body>
+</html>
